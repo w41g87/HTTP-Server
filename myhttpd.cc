@@ -62,7 +62,7 @@ string getContentByHeader(string str, string header) {
 }
 
 int openFile(string fileName) {
-  char * realPath;
+  const char * realPath;
   if (!fileName.compare("/")) realPath = "index.html";
   else realPath = fileName.c_str();
   if (access(realPath, F_OK)) return -1;
