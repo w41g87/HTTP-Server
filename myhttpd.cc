@@ -51,10 +51,10 @@ bool validate (string const &str) {
 }
 
 string getContentByHeader(string str, string header) {
-  // cout << (int)str.at(0) << endl;
-  // cout << (int)str.at(1) << endl;
-  // cout << str.length() << endl;
-  // cout << matchStart(str, string("\r\n")) << endl;
+  cout << (int)str.at(0) << endl;
+  cout << (int)str.at(1) << endl;
+  cout << str.length() << endl;
+  cout << matchStart(str, string("\r\n")) << endl;
   // sleep(1);
   if (matchStart(str, string("\r\n"))) return string("");
   else if (matchStart(str, header)) {
