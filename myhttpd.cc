@@ -74,7 +74,7 @@ int openFile(string fileName) {
 
 string parseFileName(string str) {
   int start = str.find(' ') + 1;
-  int end = str.find(' ', start) + 1;
+  int end = str.find(' ', start);
   return str.substr(start, end - start);
 }
 
