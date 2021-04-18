@@ -14,6 +14,8 @@ using namespace std;
 
 string credential;
 
+int QueueLength = 5;
+
 enum Error {
   NO_ERR, 
   FILE_NOT_FOUND, 
