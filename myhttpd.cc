@@ -63,12 +63,30 @@ string parseInput(int skt) {
 string initOutput(int error, string type) {
   string output = string();
   output.append("HTTP/1.1 ");
-  if (error) output.append("404 File Not Found\r\n");
-  else output.append("200 Document follows\r\n");
+  switch (error) {
+    FILE_NOT_FOUND:
+      output.append("404 File Not Found\r\n");
+      break;
+    INVALID_REQUEST:
+      output.append("400 Bad Request\r\n");
+      break;
+    NO_ERR:
+      output.append("200 Document follows\r\n");
+      break;
+  }
   output.append("Server: CS 252 lab5\r\nContent-type: ");
   output.append(type);
   output.append("\r\n\r\n");
-  if (error) output.append("I cant find it dumb dingus");
+  switch (error) {
+    FILE_NOT_FOUND:
+      output.append("I cant find it dumb dingus");
+      break;
+    INVALID_REQUEST:
+      output.append("I don't understand");
+      break;
+  }
+  switch (error) {
+    
   return output;
 }
 
@@ -94,7 +112,7 @@ void process(int skt) {
 
 int main(int argc, char * argv[]) {
   
-  cout << initOutput(1, "text.html") << endl;
+  cout << initOutput(INVALID_REQUEST, "text.html") << endl;
 
   //  // Print usage if not enough arguments
   // if ( argc < 2 ) {
