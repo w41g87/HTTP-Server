@@ -87,7 +87,7 @@ string parseInput(int skt) {
 }
 
 void writeOutput(int skt, string str) {
-  write(skt, str.c_str(), str.length);
+  write(skt, str.c_str(), str.length());
 }
 
 string initOutput(int error, string type) {
@@ -104,7 +104,7 @@ string initOutput(int error, string type) {
       output.append("200 Document follows\r\n");
       break;
     case UNAUTHORIZED:
-      output.append("401 Unauthorized\r\n")
+      output.append("401 Unauthorized\r\n");
       output.append("WWW-Authenticate: Basic realm=\"myhttpd-cs252\"\r\n");
       break;
   }
