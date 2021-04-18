@@ -41,12 +41,18 @@ bool validate (std::string const &str) {
   return true;
 }
 
+std::string parseFileName(std::string str) {
+  int start = str.find(' ') + 1
+  int end = str.find(' ', start) + 1;
+  return str.substr(start, end - start);
+}
+
 std::string parseInput(int skt) {
   std::string input = std::string();
   unsigned char newChar;
   int n;
 
-  while(!matchEnd(input, std::string("\r\n\r\n")) &&
+  while(!matchEnd(input, std::string("\n\n")) &&
 	  (n = read(skt, &newChar, sizeof(newChar) ) ) > 0 ) input += newChar;
 
   return input;
@@ -77,46 +83,52 @@ void process(int skt) {
   while(1) {
     int err = NO_ERR;
     std::string input = parseInput(skt);
-    if (!validate(input))
+    if (!validate(input)) err = INVALID_REQUEST;
+    else {
+
+    }
   }
 }
 
 int main(int argc, char * argv[]) {
-   // Print usage if not enough arguments
-  if ( argc < 2 ) {
-    fprintf( stderr, "%s", usage );
-    exit( -1 );
-  }
   
-  // Get the port from the arguments
-  int port = atoi( argv[argc - 1] );
+  cout << parseInput(0) << endl;
+
+  //  // Print usage if not enough arguments
+  // if ( argc < 2 ) {
+  //   fprintf( stderr, "%s", usage );
+  //   exit( -1 );
+  // }
   
-  // Set the IP address and port for this server
-  struct sockaddr_in serverIPAddress; 
-  memset( &serverIPAddress, 0, sizeof(serverIPAddress) );
-  serverIPAddress.sin_family = AF_INET;
-  serverIPAddress.sin_addr.s_addr = INADDR_ANY;
-  serverIPAddress.sin_port = htons((u_short) port);
+  // // Get the port from the arguments
+  // int port = atoi( argv[argc - 1] );
+  
+  // // Set the IP address and port for this server
+  // struct sockaddr_in serverIPAddress; 
+  // memset( &serverIPAddress, 0, sizeof(serverIPAddress) );
+  // serverIPAddress.sin_family = AF_INET;
+  // serverIPAddress.sin_addr.s_addr = INADDR_ANY;
+  // serverIPAddress.sin_port = htons((u_short) port);
 
-  // Allocate a socket
-  int serverSocket =  socket(PF_INET, SOCK_STREAM, 0);
-  if ( serverSocket < 0) {
-    perror("socket");
-    exit( -1 );
-  }
+  // // Allocate a socket
+  // int serverSocket =  socket(PF_INET, SOCK_STREAM, 0);
+  // if ( serverSocket < 0) {
+  //   perror("socket");
+  //   exit( -1 );
+  // }
 
-  // Set socket options to reuse port. Otherwise we will
-  // have to wait about 2 minutes before reusing the sae port number
-  int optval = 1; 
-  int err = setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, 
-		       (char *) &optval, sizeof( int ) );
+  // // Set socket options to reuse port. Otherwise we will
+  // // have to wait about 2 minutes before reusing the sae port number
+  // int optval = 1; 
+  // int err = setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, 
+	// 	       (char *) &optval, sizeof( int ) );
    
-  // Bind the socket to the IP address and port
-  int error = bind( serverSocket,
-		    (struct sockaddr *)&serverIPAddress,
-		    sizeof(serverIPAddress) );
-  if ( error ) {
-    perror("bind");
-    exit( -1 );
-  }
+  // // Bind the socket to the IP address and port
+  // int error = bind( serverSocket,
+	// 	    (struct sockaddr *)&serverIPAddress,
+	// 	    sizeof(serverIPAddress) );
+  // if ( error ) {
+  //   perror("bind");
+  //   exit( -1 );
+  // }
 }
