@@ -12,7 +12,7 @@
 
 using namespace std;
 
-string credential;
+string credential = "dXNlcjpxd2VydHk=";;
 
 int QueueLength = 5;
 
@@ -148,8 +148,8 @@ void process(int skt) {
   string input = parseInput(skt);
 
   cout << input << endl;
-
-  if (!validate(input)) err = INVALID_REQUEST;
+  if (!verify(getContentByHeader(input, "Authorization:"))) err = UNAUTHORIZED;
+  else if (!validate(input)) err = INVALID_REQUEST;
   else {
     string fileName = parseFileName(input);
     if ((fd = openFile(fileName)) < 0) err = FILE_NOT_FOUND;
@@ -161,7 +161,6 @@ void process(int skt) {
 }
 
 int main(int argc, char * argv[]) {
-  credential = "dXNlcjpxd2VydHk=";
 
   // Print usage if not enough arguments
 
