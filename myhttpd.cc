@@ -149,7 +149,10 @@ void process(int skt) {
   string input = parseInput(skt);
 
   cout << input << endl;
-  cout << (int)input.back() << endl;
+  for (int i = 0; i < input.length(); i ++) {
+    cout << (int)input.at(i) << endl;
+  }
+  
   if (!verify(getContentByHeader(input, "Authorization:"))) err = UNAUTHORIZED;
   else if (!validate(input)) err = INVALID_REQUEST;
   else {
