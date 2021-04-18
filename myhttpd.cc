@@ -170,6 +170,10 @@ void process(int skt) {
 
 int main(int argc, char * argv[]) {
 
+  string cmp = string("\r\n");
+
+  cout << matchStart(cmp, "\r\n") << endl;
+
   // Print usage if not enough arguments
 
   // Get the port from the arguments
