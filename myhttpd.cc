@@ -142,10 +142,17 @@ void process(int skt) {
   while(1) {
     int err = NO_ERR;
     int fd = -1;
+    string type = string("text/plain");
     string input = parseInput(skt);
+
     if (!validate(input)) err = INVALID_REQUEST;
-    else if ((fd = openFile(parseFileName(input))) < 0) err = FILE_NOT_FOUND;
-    string output = initOutput(err);
+    else {
+      string fileName = parseFileName(input);
+      if ((fd = openFile(fileName)) < 0) err = FILE_NOT_FOUND;
+      else if (matchEnd(fileName, string(".html"))) type = string("text/html");
+      else if (matchEnd(fileName, string(".gif"))) type = string("image/gif");
+    }
+    string output = initOutput(err, type);
     writeOutput(1, addDoc(output));
   }
 }
