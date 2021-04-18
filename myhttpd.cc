@@ -1,7 +1,9 @@
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,7 +60,7 @@ string getContentByHeader(string str, string header) {
   if (matchStart(str, header)) {
     int pos = str.find(':') + 2;
     return str.substr(pos, str.find('\r') - pos);
-  } else return getContentByHeader(str.substr(str.find('\n') + 1))
+  } else return getContentByHeader(str.substr(str.find('\n') + 1));
 }
 
 int openFile(string fileName) {
