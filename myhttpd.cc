@@ -153,7 +153,7 @@ void process(int skt) {
       else if (matchEnd(fileName, string(".gif"))) type = string("image/gif");
     }
     string output = initOutput(err, type);
-    writeOutput(1, addDoc(output));
+    writeOutput(1, addDoc(output, fd));
   }
 }
 
