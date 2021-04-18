@@ -160,9 +160,9 @@ void process(int skt) {
 
 int main(int argc, char * argv[]) {
   credential = "dXNlcjpxd2VydHk=";
-  process(0);
+  //process(0);
 
-  
+  cout << openFile(string("/")) << endl;
   
   //  // Print usage if not enough arguments
   // if ( argc < 2 ) {
