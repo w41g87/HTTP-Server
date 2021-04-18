@@ -53,7 +53,7 @@ string getContentByHeader(string str, string header) {
   if (matchStart(str, header)) {
     int pos = str.find(':') + 2;
     return str.substr(pos, str.find('\r') - pos);
-  } else return getContentByHeader(str.substr(str.find('\n') + 1));
+  } else return getContentByHeader(str.substr(str.find('\n') + 1), header);
 }
 
 bool verify (string str) {
