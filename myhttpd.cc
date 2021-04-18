@@ -170,9 +170,11 @@ void process(int skt) {
 
 int main(int argc, char * argv[]) {
 
-  string cmp = string("\r\n");
+  string cmp = string();
+  cmp += 13;
+  cmp += 10;
 
-  cout << matchStart(cmp, "\r\n") << endl;
+  cout << matchStart(cmp, string("\r\n")) << endl;
 
   // Print usage if not enough arguments
 
