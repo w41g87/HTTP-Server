@@ -46,7 +46,7 @@ bool validate (string const &str) {
   if (!matchStart(str, string("GET"))) return false;
   int pos = str.find(' ', str.find(' ') + 1);
   if (pos < 0) return false;
-  if (!matchStart(str.substr(pos + 1), "HTTP/1.0")) return false;
+  if (!matchStart(str.substr(pos + 1), "HTTP/1.1")) return false;
   return true;
 }
 
