@@ -51,7 +51,7 @@ bool validate (string const &str) {
 }
 
 string getContentByHeader(string str, string header) {
-  cout << str << endl;
+  //cout << str << endl;
   if (matchStart(str, string("\r\n"))) return string();
   else if (matchStart(str, header)) {
     int pos = str.find(':') + 2;
@@ -149,6 +149,7 @@ void process(int skt) {
   string input = parseInput(skt);
 
   cout << input << endl;
+  cout << (int)input.back() << endl;
   if (!verify(getContentByHeader(input, "Authorization:"))) err = UNAUTHORIZED;
   else if (!validate(input)) err = INVALID_REQUEST;
   else {
