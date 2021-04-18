@@ -56,7 +56,7 @@ string getContentByHeader(string str, string header) {
   cout << str.length() << endl;
   cout << matchStart(str, string("\r\n")) << endl;
   // sleep(1);
-  if (matchStart(str, string("\r\n"))) return string("");
+  if (matchStart(str, string("\r\n")) != 0) return string("");
   else if (matchStart(str, header)) {
     int pos = str.find(':') + 2;
     return str.substr(pos, str.find('\r') - pos);
