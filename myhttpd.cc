@@ -85,7 +85,7 @@ string parseInput(int skt) {
   unsigned char newChar;
   int n;
 
-  while(!matchEnd(input, string("\n\n")) &&
+  while(!matchEnd(input, string("\r\n\r\n")) &&
 	  (n = read(skt, &newChar, sizeof(newChar) ) ) > 0 ) input += newChar;
 
   return input;
