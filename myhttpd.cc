@@ -164,7 +164,7 @@ int main(int argc, char * argv[]) {
   // Print usage if not enough arguments
 
   // Get the port from the arguments
-  int port = argv[argc - 1] ? atoi( argv[argc - 1] ) : 1337;
+  int port = argv[argc - 1] ? atoi( argv[argc - 1] ) : 8006;
   
   // Set the IP address and port for this server
   struct sockaddr_in serverIPAddress; 
