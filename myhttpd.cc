@@ -48,19 +48,19 @@ bool validate (string const &str) {
   return true;
 }
 
-bool verify (string str) {
-  string login = getContentByHeader(str, string("Authorization:"));
-  if (!matchStart(login, string("Basic"))) return false;
-  if (!credential.compare(login.substr(login.find(' ') + 1))) return false;
-  return true;
-}
-
 string getContentByHeader(string str, string header) {
   if (matchStart(str, "\r\n")) return string();
   if (matchStart(str, header)) {
     int pos = str.find(':') + 2;
     return str.substr(pos, str.find('\r') - pos);
   } else return getContentByHeader(str.substr(str.find('\n') + 1));
+}
+
+bool verify (string str) {
+  string login = getContentByHeader(str, string("Authorization:"));
+  if (!matchStart(login, string("Basic"))) return false;
+  if (!credential.compare(login.substr(login.find(' ') + 1))) return false;
+  return true;
 }
 
 int openFile(string fileName) {
