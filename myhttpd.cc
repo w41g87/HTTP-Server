@@ -140,65 +140,77 @@ string addDoc(string output, int fd) {
 }
 
 void process(int skt) {
-  while(1) {
-    int err = NO_ERR;
-    int fd = -1;
-    string type = string("text/plain");
-    string input = parseInput(skt);
+  int err = NO_ERR;
+  int fd = -1;
+  string type = string("text/plain");
+  string input = parseInput(skt);
 
-    if (!validate(input)) err = INVALID_REQUEST;
-    else {
-      string fileName = parseFileName(input);
-      if ((fd = openFile(fileName)) < 0) err = FILE_NOT_FOUND;
-      else if (matchEnd(fileName, string(".html"))) type = string("text/html");
-      else if (matchEnd(fileName, string(".gif"))) type = string("image/gif");
-    }
-    string output = initOutput(err, type);
-    writeOutput(1, addDoc(output, fd));
+  if (!validate(input)) err = INVALID_REQUEST;
+  else {
+    string fileName = parseFileName(input);
+    if ((fd = openFile(fileName)) < 0) err = FILE_NOT_FOUND;
+    else if (matchEnd(fileName, string(".html"))) type = string("text/html");
+    else if (matchEnd(fileName, string(".gif"))) type = string("image/gif");
   }
+  string output = initOutput(err, type);
+  writeOutput(skt, addDoc(output, fd));
 }
 
 int main(int argc, char * argv[]) {
   credential = "dXNlcjpxd2VydHk=";
-  process(0);
 
-  // cout << openFile(string("/")) << endl;
-  
-  //  // Print usage if not enough arguments
-  // if ( argc < 2 ) {
-  //   fprintf( stderr, "%s", usage );
-  //   exit( -1 );
-  // }
-  
-  // // Get the port from the arguments
-  // int port = atoi( argv[argc - 1] );
-  
-  // // Set the IP address and port for this server
-  // struct sockaddr_in serverIPAddress; 
-  // memset( &serverIPAddress, 0, sizeof(serverIPAddress) );
-  // serverIPAddress.sin_family = AF_INET;
-  // serverIPAddress.sin_addr.s_addr = INADDR_ANY;
-  // serverIPAddress.sin_port = htons((u_short) port);
+  // Print usage if not enough arguments
 
-  // // Allocate a socket
-  // int serverSocket =  socket(PF_INET, SOCK_STREAM, 0);
-  // if ( serverSocket < 0) {
-  //   perror("socket");
-  //   exit( -1 );
-  // }
+  // Get the port from the arguments
+  int port = argv[argc - 1] ? atoi( argv[argc - 1] ) : 1337;
+  
+  // Set the IP address and port for this server
+  struct sockaddr_in serverIPAddress; 
+  memset( &serverIPAddress, 0, sizeof(serverIPAddress) );
+  serverIPAddress.sin_family = AF_INET;
+  serverIPAddress.sin_addr.s_addr = INADDR_ANY;
+  serverIPAddress.sin_port = htons((u_short) port);
 
-  // // Set socket options to reuse port. Otherwise we will
-  // // have to wait about 2 minutes before reusing the sae port number
-  // int optval = 1; 
-  // int err = setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, 
-	// 	       (char *) &optval, sizeof( int ) );
+  // Allocate a socket
+  int serverSocket =  socket(PF_INET, SOCK_STREAM, 0);
+  if ( serverSocket < 0) {
+    perror("socket");
+    exit( -1 );
+  }
+
+  // Set socket options to reuse port. Otherwise we will
+  // have to wait about 2 minutes before reusing the sae port number
+  int optval = 1; 
+  int err = setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, 
+		       (char *) &optval, sizeof( int ) );
    
-  // // Bind the socket to the IP address and port
-  // int error = bind( serverSocket,
-	// 	    (struct sockaddr *)&serverIPAddress,
-	// 	    sizeof(serverIPAddress) );
-  // if ( error ) {
-  //   perror("bind");
-  //   exit( -1 );
-  // }
+  // Bind the socket to the IP address and port
+  int error = bind( serverSocket,
+		    (struct sockaddr *)&serverIPAddress,
+		    sizeof(serverIPAddress) );
+  if ( error ) {
+    perror("bind");
+    exit( -1 );
+  }
+
+  while ( 1 ) {
+
+    // Accept incoming connections
+    struct sockaddr_in clientIPAddress;
+    int alen = sizeof( clientIPAddress );
+    int clientSocket = accept( serverSocket,
+			      (struct sockaddr *)&clientIPAddress,
+			      (socklen_t*)&alen);
+
+    if ( clientSocket < 0 ) {
+      perror( "accept" );
+      exit( -1 );
+    }
+
+    // Process request.
+    process( clientSocket );
+
+    // Close socket
+    close( clientSocket );
+  }
 }
