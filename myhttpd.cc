@@ -10,10 +10,13 @@
 
 using namespace std;
 
+string credential;
+
 enum Error {
   NO_ERR, 
   FILE_NOT_FOUND, 
-  INVALID_REQUEST
+  INVALID_REQUEST, 
+  UNAUTHORIZED
 };
 
 enum Param {
@@ -43,6 +46,29 @@ bool validate (string const &str) {
   return true;
 }
 
+bool verify (string str) {
+  string login = getContentByHeader(str, string("Authorization:"));
+  if (!matchStart(login, string("Basic"))) return false;
+  if (!credential.compare(login.substr(login.find(' ') + 1))) return false;
+  return true;
+}
+
+string getContentByHeader(string str, string header) {
+  if (matchStart(str, "\r\n")) return string();
+  if (matchStart(str, header)) {
+    int pos = str.find(':') + 2;
+    return str.substr(pos, str.find('\r') - pos);
+  } else return getContentByHeader(str.substr(str.find('\n') + 1))
+}
+
+int openFile(string fileName) {
+  char * realPath;
+  if (!fileName.compare("/")) realPath = "index.html";
+  else realPath = fileName.c_str();
+  if (access(realPath, F_OK)) return -1;
+  else return open(realPath, O_RDONLY);
+}
+
 string parseFileName(string str) {
   int start = str.find(' ') + 1;
   int end = str.find(' ', start) + 1;
@@ -60,6 +86,10 @@ string parseInput(int skt) {
   return input;
 }
 
+void writeOutput(int skt, string str) {
+  write(skt, str.c_str(), str.length);
+}
+
 string initOutput(int error, string type) {
   string output = string();
   output.append("HTTP/1.1 ");
@@ -73,6 +103,10 @@ string initOutput(int error, string type) {
     case NO_ERR:
       output.append("200 Document follows\r\n");
       break;
+    case UNAUTHORIZED:
+      output.append("401 Unauthorized\r\n")
+      output.append("WWW-Authenticate: Basic realm=\"myhttpd-cs252\"\r\n");
+      break;
   }
   output.append("Server: CS 252 lab5\r\nContent-type: ");
   output.append(type);
@@ -84,11 +118,16 @@ string initOutput(int error, string type) {
     case INVALID_REQUEST:
       output.append("I don't understand");
       break;
+    case UNAUTHORIZED:
+      output.append("Invalid username / password");
+      break;
   }
   return output;
 }
 
 string addDoc(string output, int fd) {
+  if (fd < 0) return output;
+
   unsigned char newChar;
   int n;
 
@@ -100,18 +139,21 @@ string addDoc(string output, int fd) {
 void process(int skt) {
   while(1) {
     int err = NO_ERR;
+    int fd = -1;
     string input = parseInput(skt);
     if (!validate(input)) err = INVALID_REQUEST;
-    else {
-
-    }
+    else if ((fd = openFile(parseFileName(input))) < 0) err = FILE_NOT_FOUND;
+    string output = initOutput(err);
+    writeOutput(1, addDoc(output));
   }
 }
 
 int main(int argc, char * argv[]) {
-  
-  cout << initOutput(INVALID_REQUEST, "text.html") << endl;
+  credential = "dXNlcjpxd2VydHk=";
+  process(0);
 
+  
+  
   //  // Print usage if not enough arguments
   // if ( argc < 2 ) {
   //   fprintf( stderr, "%s", usage );
