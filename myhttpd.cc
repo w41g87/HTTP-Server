@@ -147,6 +147,8 @@ void process(int skt) {
   string type = string("text/plain");
   string input = parseInput(skt);
 
+  cout << input << endl;
+
   if (!validate(input)) err = INVALID_REQUEST;
   else {
     string fileName = parseFileName(input);
