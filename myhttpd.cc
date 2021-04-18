@@ -65,7 +65,7 @@ bool verify (string str) {
 
 int openFile(string fileName) {
   const char * realPath;
-  cout << fileName << endl;
+  cout << fileName.length() << endl;
   if (!fileName.compare("/")) realPath = "index.html";
   else realPath = fileName.c_str();
   if (access(realPath, F_OK)) return -1;
@@ -160,9 +160,9 @@ void process(int skt) {
 
 int main(int argc, char * argv[]) {
   credential = "dXNlcjpxd2VydHk=";
-  //process(0);
+  process(0);
 
-  cout << openFile(string("/")) << endl;
+  // cout << openFile(string("/")) << endl;
   
   //  // Print usage if not enough arguments
   // if ( argc < 2 ) {
