@@ -68,7 +68,7 @@ bool verify (string str) {
   cout << login << endl;
   cout << login.substr(login.find(' ') + 1) << endl;
   if (!matchStart(login, string("Basic"))) return false;
-  if (!credential.compare(login.substr(login.find(' ') + 1))) return false;
+  if (credential.compare(login.substr(login.find(' ') + 1))) return false;
   cout << "verified" << endl;
   return true;
 }
