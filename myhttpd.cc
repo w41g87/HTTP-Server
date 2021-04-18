@@ -94,7 +94,7 @@ void process(int skt) {
 
 int main(int argc, char * argv[]) {
   
-  cout << initOutput(0, "text.html") << endl;
+  cout << initOutput(1, "text.html") << endl;
 
   //  // Print usage if not enough arguments
   // if ( argc < 2 ) {
