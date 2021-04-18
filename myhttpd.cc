@@ -44,7 +44,7 @@ bool validate (std::string const &str) {
 }
 
 string parseFileName(std::string str) {
-  int start = str.find(' ') + 1
+  int start = str.find(' ') + 1;
   int end = str.find(' ', start) + 1;
   return str.substr(start, end - start);
 }
