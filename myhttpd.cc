@@ -52,8 +52,8 @@ bool validate (string const &str) {
 
 string getContentByHeader(string str, string header) {
   cout << str << endl;
-  if (matchStart(str, "\r\n")) return string();
-  if (matchStart(str, header)) {
+  if (matchStart(str, string("\r\n"))) return string();
+  else if (matchStart(str, header)) {
     int pos = str.find(':') + 2;
     return str.substr(pos, str.find('\r') - pos);
   } else return getContentByHeader(str.substr(str.find('\n') + 1), header);
