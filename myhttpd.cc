@@ -94,7 +94,7 @@ void process(int skt) {
 
 int main(int argc, char * argv[]) {
   
-  cout << validate(parseInput(0)) << endl;
+  cout << parseFileName(parseInput(0)) << endl;
 
   //  // Print usage if not enough arguments
   // if ( argc < 2 ) {
