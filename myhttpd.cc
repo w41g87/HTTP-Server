@@ -56,16 +56,11 @@ string getContentByHeader(string str, string header) {
   // cout << str.length() << endl;
   // cout << (bool)matchStart(str, string("\r\n")) << endl;
   // sleep(1);
-  if (matchStart(str, string("\r\n")) != 0) {
-    cout << "matched" << endl;
-    return string("");
-  } else if (matchStart(str, header)) {
+  if (matchStart(str, string("\r\n")) != 0) return string("");
+  else if (matchStart(str, header)) {
     int pos = str.find(':') + 2;
     return str.substr(pos, str.find('\r') - pos);
-  } else {
-    cout << "recursive" << endl;
-    return getContentByHeader(str.substr(str.find('\n') + 1), header);
-  }
+  } else return getContentByHeader(str.substr(str.find('\n') + 1), header);
 }
 
 bool verify (string str) {
