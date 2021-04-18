@@ -85,8 +85,6 @@ string initOutput(int error, string type) {
       output.append("I don't understand");
       break;
   }
-  switch (error) {
-    
   return output;
 }
 
