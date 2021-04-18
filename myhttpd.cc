@@ -65,6 +65,7 @@ bool verify (string str) {
 
 int openFile(string fileName) {
   const char * realPath;
+  cout << fileName << endl;
   if (!fileName.compare("/")) realPath = "index.html";
   else realPath = fileName.c_str();
   if (access(realPath, F_OK)) return -1;
