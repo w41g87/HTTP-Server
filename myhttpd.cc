@@ -52,7 +52,7 @@ bool validate (string const &str) {
 
 string getContentByHeader(string str, string header) {
   cout << str << endl;
-  getchar();
+  sleep(1);
   if (matchStart(str, string("\r\n"))) return string();
   else if (matchStart(str, header)) {
     int pos = str.find(':') + 2;
