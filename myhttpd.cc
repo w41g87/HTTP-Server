@@ -216,7 +216,7 @@ int main(int argc, char * argv[]) {
       perror( "accept" );
       exit( -1 );
     }
-
+    cout << "accepted" << endl;
     // Process request.
     process( clientSocket );
 
