@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <iostream>
 
+using namespace std;
+
 enum Error {
   NO_ERR, 
   FILE_NOT_FOUND, 
@@ -41,13 +43,13 @@ bool validate (std::string const &str) {
   return true;
 }
 
-std::string parseFileName(std::string str) {
+string parseFileName(std::string str) {
   int start = str.find(' ') + 1
   int end = str.find(' ', start) + 1;
   return str.substr(start, end - start);
 }
 
-std::string parseInput(int skt) {
+string parseInput(int skt) {
   std::string input = std::string();
   unsigned char newChar;
   int n;
