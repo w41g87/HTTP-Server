@@ -66,12 +66,12 @@ bool verify (string str) {
 }
 
 int openFile(string fileName) {
-  const char * realPath;
-  cout << fileName.length() << endl;
-  if (!fileName.compare("/")) realPath = "index.html";
-  else realPath = fileName.c_str();
-  if (access(realPath, F_OK)) return -1;
-  else return open(realPath, O_RDONLY);
+  string realPath = string("http-root-dir");
+  //cout << fileName.length() << endl;
+  if (!fileName.compare("/")) realPath.append("/index.html");
+  else realPath.append(fileName);
+  if (access(realPath.c_str(), F_OK)) return -1;
+  else return open(realPath.c_str(), O_RDONLY);
 }
 
 string parseFileName(string str) {
