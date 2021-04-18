@@ -37,7 +37,7 @@ bool validate (std::string const &str) {
   if (!matchStart(str, std::string("GET"))) return false;
   int pos = str.find(' ', str.find(' ') + 1);
   if (pos < 0) return false;
-  if (!matchStart(str.substring(pos + 1), "HTTP/1.0")) return false;
+  if (!matchStart(str.substr(pos + 1), "HTTP/1.0")) return false;
   return true;
 }
 
@@ -76,7 +76,7 @@ std::string addDoc(std::string output, int fd) {
 void process(int skt) {
   while(1) {
     int err = NO_ERR;
-    std::string input = parseInput(int skt);
+    std::string input = parseInput(skt);
     if (!validate(input))
   }
 }
