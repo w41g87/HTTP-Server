@@ -193,6 +193,14 @@ int main(int argc, char * argv[]) {
     exit( -1 );
   }
 
+  // Put socket in listening mode and set the 
+  // size of the queue of unprocessed connections
+  error = listen( serverSocket, QueueLength);
+  if ( error ) {
+    perror("listen");
+    exit( -1 );
+  }
+
   while ( 1 ) {
 
     // Accept incoming connections
