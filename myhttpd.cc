@@ -23,45 +23,45 @@ enum Param {
   POOL_OF_THREADS
 };
 
-bool matchEnd (std::string const &str, std::string const &end) {
+bool matchEnd (string const &str, string const &end) {
   if (str.length() >= end.length())
     return (0 == str.compare (str.length() - end.length(), end.length(), end));
   else return false;
 }
 
-bool matchStart (std::string const &str, std::string const &start) {
+bool matchStart (string const &str, string const &start) {
   if (str.length() >= start.length()) 
     return (0 == str.compare (0, start.length(), start));
   else return false;
 }
 
-bool validate (std::string const &str) {
-  if (!matchStart(str, std::string("GET"))) return false;
+bool validate (string const &str) {
+  if (!matchStart(str, string("GET"))) return false;
   int pos = str.find(' ', str.find(' ') + 1);
   if (pos < 0) return false;
   if (!matchStart(str.substr(pos + 1), "HTTP/1.0")) return false;
   return true;
 }
 
-string parseFileName(std::string str) {
+string parseFileName(string str) {
   int start = str.find(' ') + 1;
   int end = str.find(' ', start) + 1;
   return str.substr(start, end - start);
 }
 
 string parseInput(int skt) {
-  std::string input = std::string();
+  string input = string();
   unsigned char newChar;
   int n;
 
-  while(!matchEnd(input, std::string("\n\n")) &&
+  while(!matchEnd(input, string("\n\n")) &&
 	  (n = read(skt, &newChar, sizeof(newChar) ) ) > 0 ) input += newChar;
 
   return input;
 }
 
-std::string initOutput(bool error, std::string type) {
-  std::string output = std::string();
+string initOutput(bool error, string type) {
+  string output = string();
   output.append("HTTP/1.1 ");
   if (error) output.append("404 File Not Found\r\n");
   else output.append("200 Document follows\r\n");
@@ -72,7 +72,7 @@ std::string initOutput(bool error, std::string type) {
   return output;
 }
 
-std::string addDoc(std::string output, int fd) {
+string addDoc(string output, int fd) {
   unsigned char newChar;
   int n;
 
@@ -84,7 +84,7 @@ std::string addDoc(std::string output, int fd) {
 void process(int skt) {
   while(1) {
     int err = NO_ERR;
-    std::string input = parseInput(skt);
+    string input = parseInput(skt);
     if (!validate(input)) err = INVALID_REQUEST;
     else {
 
@@ -94,7 +94,7 @@ void process(int skt) {
 
 int main(int argc, char * argv[]) {
   
-  cout << parseInput(0) << endl;
+  cout << validate(parseInput(0)) << endl;
 
   //  // Print usage if not enough arguments
   // if ( argc < 2 ) {
