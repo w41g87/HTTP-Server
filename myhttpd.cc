@@ -60,7 +60,7 @@ string parseInput(int skt) {
   return input;
 }
 
-string initOutput(bool error, string type) {
+string initOutput(int error, string type) {
   string output = string();
   output.append("HTTP/1.1 ");
   if (error) output.append("404 File Not Found\r\n");
@@ -94,7 +94,7 @@ void process(int skt) {
 
 int main(int argc, char * argv[]) {
   
-  cout << parseFileName(parseInput(0)) << endl;
+  cout << initOutput(0, "text.html") << endl;
 
   //  // Print usage if not enough arguments
   // if ( argc < 2 ) {
