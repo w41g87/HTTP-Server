@@ -12,7 +12,7 @@
 
 using namespace std;
 
-string credential = "dXNlcjpxd2VydHk=";;
+string credential = "dXNlcjpxd2VydHk=";
 
 int QueueLength = 5;
 
@@ -69,6 +69,7 @@ bool verify (string str) {
   cout << login.substr(login.find(' ') + 1) << endl;
   if (!matchStart(login, string("Basic"))) return false;
   if (!credential.compare(login.substr(login.find(' ') + 1))) return false;
+  cout << "verified" << endl;
   return true;
 }
 
@@ -154,7 +155,7 @@ void process(int skt) {
   string type = string("text/plain");
   string input = parseInput(skt);
 
-  // cout << input << endl;
+  cout << input << endl;
   // for (int i = 0; i < input.length(); i ++) {
   //   cout << (int)input.at(i) << endl;
   // }
