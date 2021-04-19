@@ -77,8 +77,8 @@ void intHandler(int signum) {
       wait(NULL);
       break;
     case POOL_OF_THREADS:
-      pthread_exit(0);
-      //for (int i = 0; i < 5; i++) pthread_cancel(thread[i]);
+      //pthread_exit(0);
+      for (int i = 0; i < 5; i++) pthread_cancel(thread[i]);
       break;
   }
   close(serverSocket);
