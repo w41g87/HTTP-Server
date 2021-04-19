@@ -181,8 +181,7 @@ string addDoc(string output, int fd) {
   return output;
 }
 
-void process(void * arg) {
-  int skt = *((int *)arg);
+void process(int skt) {
   int err = NO_ERR;
   int fd = -1;
   string type = string("text/plain");
@@ -227,13 +226,13 @@ void atomic(void * arg) {
     switch (con) {
       case NO_CONCURRENCY:
       case POOL_OF_THREADS:
-        process( &clientSocket );
+        process( clientSocket );
         break;
       case NEW_PROCESS: 
         cout << "fork" << endl;
         error = fork();
         if (!error) {
-          process(&clientSocket);
+          process(clientSocket);
           close(clientSocket);
           exit(0);
         }
