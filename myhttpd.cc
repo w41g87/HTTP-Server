@@ -43,7 +43,7 @@ pthread_t thread[5];
 
 int numThreads = 0;
 
-
+int serverSocket;
 
 enum Error {
   NO_ERR, 
@@ -230,7 +230,7 @@ void process(int skt) {
   close(skt);
 }
 
-void atomic(int serverSocket) {
+void atomic() {
   int error;
 
   while ( 1 ) {
@@ -365,7 +365,7 @@ int main(int argc, char * argv[]) {
   serverIPAddress.sin_port = htons((u_short) port);
 
   // Allocate a socket
-  int serverSocket =  socket(PF_INET, SOCK_STREAM, 0);
+  serverSocket =  socket(PF_INET, SOCK_STREAM, 0);
   if ( serverSocket < 0) {
     perror("socket");
     exit( -1 );
@@ -396,7 +396,7 @@ int main(int argc, char * argv[]) {
   if (concur == POOL_OF_THREADS) {
     for (int i = 0; i < 5; i++) {
       numThreads++;
-      pthread_create(&thread[i], NULL, (void * (*)(void *))atomic, (void *)serverSocket);
+      pthread_create(&thread[i], NULL, (void * (*)(void *))atomic, NULL);
     }
   }
   atomic(serverSocket);
