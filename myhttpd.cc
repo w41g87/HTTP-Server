@@ -341,7 +341,7 @@ int main(int argc, char * argv[]) {
     perror("listen");
     exit( -1 );
   }
-  int * arg = calloc(2, sizeof(int));
+  int * arg = (int *)calloc(2, sizeof(int));
   arg[0] = serverSocket;
   arg[1] = con;
   if (con == POOL_OF_THREADS) {
