@@ -71,6 +71,7 @@ void chldHandler(int signum) {
 }
 
 void intHandler(int signum) {
+  cout << "interrupted" << endl;
   switch (concur) {
     case NEW_PROCESS:
       wait(NULL);
