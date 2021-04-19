@@ -235,7 +235,7 @@ void atomic(void * arg) {
 
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-        pthread_create(&thread, &attr, process, (void*)&clientSocket);
+        pthread_create(&thread, &attr, (void * (*)(void *)) process, (void*)clientSocket);
         break;
     }
     // Close socket
@@ -348,7 +348,7 @@ int main(int argc, char * argv[]) {
     pthread_t thread[5];
     for (int i = 0; i < 5; i++) {
 
-      pthread_create(&thread[i], NULL, atomic, (void *)arg);
+      pthread_create(&thread[i], NULL, (void * (*)(void *))atomic, (void *)arg);
     }
   }
   atomic((void *) arg);
