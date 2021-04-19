@@ -210,7 +210,6 @@ void atomic(void * arg) {
   int serverSocket = ((int *)arg)[0];
   cout << serverSocket << endl;
   int con = ((int *)arg)[1];
-  free(arg);
   int error;
 
   while ( 1 ) {
@@ -363,7 +362,7 @@ int main(int argc, char * argv[]) {
     perror("listen");
     exit( -1 );
   }
-  int * arg = (int *)calloc(2, sizeof(int));
+  int arg[2];
   arg[0] = serverSocket;
   arg[1] = con;
   if (con == POOL_OF_THREADS) {
