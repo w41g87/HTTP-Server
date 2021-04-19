@@ -222,7 +222,7 @@ void atomic(void * arg) {
         process( &clientSocket );
         break;
       case NEW_PROCESS:
-        error = fork();
+        int error = fork();
         if (!error) {
           process(&clientSocket);
           close(clientSocket);
