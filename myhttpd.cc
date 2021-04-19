@@ -10,6 +10,26 @@
 #include <stdio.h>
 #include <iostream>
 
+const char * usage =
+"                                                               \n"
+"me-server:                                                \n"
+"                                                               \n"
+"Simple HTTP server program     \n"
+"                                                               \n"
+"To use it in one window type:                                  \n"
+"                                                               \n"
+"   myhttpd [-f|-t|-p] [port]\n"
+"                                                               \n"
+"Where 1024 < port < 65536.             \n"
+"                                                               \n"
+"In another window type:                                       \n"
+"                                                               \n"
+"   telnet <host> <port>                                        \n"
+"                                                               \n"
+"where <host> is the name of the machine where myhttpd is \n"
+"running. <port> is the port number you used when you run myhttpd.\n"
+"                                                               \n";
+
 using namespace std;
 
 string credential = "dXNlcjpxd2VydHk=";
@@ -29,6 +49,10 @@ enum Param {
   NEW_THREAD,
   POOL_OF_THREADS
 };
+
+void pipeHandler(int signum) {
+  cout << "SIGPIPE" << endl;
+}
 
 bool matchEnd (string const &str, string const &end) {
   if (str.length() >= end.length())
@@ -56,7 +80,7 @@ string getContentByHeader(string str, string header) {
   // cout << str.length() << endl;
   // cout << (bool)matchStart(str, string("\r\n")) << endl;
   // sleep(1);
-  if (matchStart(str, string("\r\n")) != 0) return string("");
+  if (matchStart(str, string("\r\n")) != 0 || str.length() < 2) return string("");
   else if (matchStart(str, header)) {
     int pos = str.find(':') + 2;
     return str.substr(pos, str.find('\r') - pos);
@@ -65,8 +89,8 @@ string getContentByHeader(string str, string header) {
 
 bool verify (string str) {
   string login = getContentByHeader(str, string("Authorization:"));
-  cout << login << endl;
-  cout << login.substr(login.find(' ') + 1) << endl;
+  // cout << login << endl;
+  // cout << login.substr(login.find(' ') + 1) << endl;
   if (!matchStart(login, string("Basic"))) return false;
   if (credential.compare(login.substr(login.find(' ') + 1))) return false;
   cout << "verified" << endl;
@@ -74,7 +98,7 @@ bool verify (string str) {
 }
 
 int openFile(string fileName) {
-  string realPath = string("http-root-dir");
+  string realPath = string("http-root-dir/htdocs");
   //cout << fileName.length() << endl;
   if (!fileName.compare("/")) realPath.append("/index.html");
   else realPath.append(fileName);
@@ -89,7 +113,7 @@ string parseFileName(string str) {
 }
 
 string parseInput(int skt) {
-  string input = string();
+  string input = string("");
   unsigned char newChar;
   int n;
 
@@ -174,16 +198,65 @@ void process(int skt) {
 
 int main(int argc, char * argv[]) {
 
-  string cmp = string();
-  cmp += 13;
-  cmp += 10;
+  int port = 8006;
+  int con = NO_CONCURRENCY;
 
-  cout << matchStart(cmp, string("\r\n")) << endl;
+  if (argc == 2) {
+    if (!strcmp(arg[1], "-f")) con = NEW_PROCESS;
+    else if (!strcmp(arg[1], "-t")) con = NEW_THREAD;
+    else if (!strcmp(arg[1], "-p")) con = POOL_OF_THREADS;
+    else if (!strcmp(arg[1], "--help")) {
+      cout << usage << endl;
+      exit(0);
+    } else {
+      try {
+        port = stoi(string(argv[1]));
+        if (port <= 1024 || port >= 65536) {
+          cout << usage << endl;
+          exit(0);
+        }
+      } catch (invalid_argument e) {
+        cout << usage << endl;
+        exit(0);
+      }
+    }
+  } else if (argc == 3) {
+    if (!strcmp(arg[1], "-f")) con = NEW_PROCESS;
+    else if (!strcmp(arg[1], "-t")) con = NEW_THREAD;
+    else if (!strcmp(arg[1], "-p")) con = POOL_OF_THREADS;
+    else {
+      cout << usage << endl;
+      exit(0);
+    }
+
+    try {
+      port = stoi(string(argv[2]));
+      if (port <= 1024 || port >= 65536) {
+        cout << usage << endl;
+        exit(0);
+      }
+    } catch (invalid_argument e) {
+      cout << usage << endl;
+      exit(0);
+    }
+  }
 
   // Print usage if not enough arguments
 
+
+  // Signal handling for SIGPIPE
+  struct sigaction sig;
+  sig.sa_handler = pipeHandler;
+  sigemptyset(&sig.sa_mask);
+  sig.sa_flags = SA_RESTART;
+
+  if(sigaction(SIGPIPE, &c, NULL)){
+      perror("sigaction");
+      exit(2);
+  }
+
   // Get the port from the arguments
-  int port = argc > 1 && argv[argc - 1] ? atoi( argv[argc - 1] ) : 8006;
+  argc > 1 && argv[argc - 1] ? atoi( argv[argc - 1] ) : 8006;
   
   // Set the IP address and port for this server
   struct sockaddr_in serverIPAddress; 
@@ -235,7 +308,7 @@ int main(int argc, char * argv[]) {
       perror( "accept" );
       exit( -1 );
     }
-    cout << "accepted" << endl;
+
     // Process request.
     process( clientSocket );
 
