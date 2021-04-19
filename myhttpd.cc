@@ -205,7 +205,7 @@ void atomic(void * arg) {
   int con = ((int *)arg)[1];
   free(arg);
   int error;
-  
+
   while ( 1 ) {
     // Accept incoming connections
     struct sockaddr_in clientIPAddress;
@@ -224,6 +224,7 @@ void atomic(void * arg) {
         process( &clientSocket );
         break;
       case NEW_PROCESS: 
+        cout << "fork" << endl;
         error = fork();
         if (!error) {
           process(&clientSocket);
@@ -237,6 +238,7 @@ void atomic(void * arg) {
 
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+        cout << "thread" << endl;
         pthread_create(&thread, &attr, (void * (*)(void *)) process, (void*)clientSocket);
         break;
     }
@@ -288,6 +290,9 @@ int main(int argc, char * argv[]) {
       cout << usage << endl;
       exit(0);
     }
+  } else {
+    cout << usage << endl;
+    exit(0);
   }
 
   // Print usage if not enough arguments
@@ -349,7 +354,7 @@ int main(int argc, char * argv[]) {
   if (con == POOL_OF_THREADS) {
     pthread_t thread[5];
     for (int i = 0; i < 5; i++) {
-
+      cout << "POS" << endl;
       pthread_create(&thread[i], NULL, (void * (*)(void *))atomic, (void *)arg);
     }
   }
