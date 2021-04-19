@@ -200,9 +200,10 @@ void process(void * arg) {
   writeOutput(skt, addDoc(output, fd));
 }
 
-void atomic(void * arg1, void * arg2) {
-  int serverSocket = *(int *)arg1;
-  int con = *(int *)arg2;
+void atomic(void * arg) {
+  int serverSocket = (int *)arg[0];
+  int con = (int *)arg[1];
+  free(arg);
   while ( 1 ) {
     // Accept incoming connections
     struct sockaddr_in clientIPAddress;
@@ -340,12 +341,15 @@ int main(int argc, char * argv[]) {
     perror("listen");
     exit( -1 );
   }
-
+  int * arg = calloc(2, sizeof(int));
+  arg[0] = serverSocket;
+  arg[1] = con;
   if (con == POOL_OF_THREADS) {
     pthread_t thread[5];
     for (int i = 0; i < 5; i++) {
-      pthread_create(&thread[i], NULL, atomic, (void *)&serverSocket, (void *)&con);
+
+      pthread_create(&thread[i], NULL, atomic, (void *)arg);
     }
   }
-  atomic(serverSocket, con);
+  atomic((void *) arg);
 }
