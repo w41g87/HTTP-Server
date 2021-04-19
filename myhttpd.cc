@@ -199,16 +199,18 @@ void process(int skt) {
     if ((fd = openFile(fileName)) < 0) err = FILE_NOT_FOUND;
     else if (matchEnd(fileName, string(".html")) || !fileName.compare("/")) type = string("text/html");
     else if (matchEnd(fileName, string(".gif"))) type = string("image/gif");
+    else if (matchEnd(fileName, string(".svg"))) type = string("image/svg+xml");
   }
   string output = initOutput(err, type);
   cout << output << endl;
   writeOutput(skt, addDoc(output, fd));
+  close(fd);
   close(skt);
 }
 
 void atomic(void * arg) {
   int serverSocket = ((int *)arg)[0];
-  cout << serverSocket << endl;
+  //cout << serverSocket << endl;
   int con = ((int *)arg)[1];
   int error;
 
