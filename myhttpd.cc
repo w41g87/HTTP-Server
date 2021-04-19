@@ -56,6 +56,11 @@ void pipeHandler(int signum) {
   cout << "SIGPIPE" << endl;
 }
 
+void chldHandler(int signum) {
+  int e;
+  while((e = wait(NULL)) > 0) if (isatty(0)) printf("%d exited\n", e);
+}
+
 bool matchEnd (string const &str, string const &end) {
   if (str.length() >= end.length())
     return (0 == str.compare (str.length() - end.length(), end.length(), end));
@@ -299,12 +304,22 @@ int main(int argc, char * argv[]) {
 
 
   // Signal handling for SIGPIPE
-  struct sigaction sig;
-  sig.sa_handler = pipeHandler;
-  sigemptyset(&sig.sa_mask);
-  sig.sa_flags = SA_RESTART;
+  struct sigaction pipe, chld;
+  pipe.sa_handler = pipeHandler;
+  sigemptyset(&pipe.sa_mask);
+  pipe.sa_flags = SA_RESTART;
+  chld.sa_handler = chldHandler;
+  sigemptyset(&chld.sa_mask);
+  chld.sa_flags = SA_RESTART;
 
-  if(sigaction(SIGPIPE, &sig, NULL)){
+  if(sigaction(SIGPIPE, &pipe, NULL)){
+      perror("sigaction");
+      exit(2);
+  }
+
+  // Signal handling for child exiting
+
+  if(sigaction(SIGCHLD, &chld, NULL)){
       perror("sigaction");
       exit(2);
   }
