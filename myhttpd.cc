@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <signal.h>
+#include <pthread.h>
 
 const char * usage =
 "                                                               \n"
@@ -198,6 +199,45 @@ void process(int skt) {
   writeOutput(skt, addDoc(output, fd));
 }
 
+void atomic(int serverSocket, int con) {
+  while ( 1 ) {
+    // Accept incoming connections
+    struct sockaddr_in clientIPAddress;
+    int alen = sizeof( clientIPAddress );
+    int clientSocket = accept( serverSocket,
+			      (struct sockaddr *)&clientIPAddress,
+			      (socklen_t*)&alen);
+
+    if ( clientSocket < 0 ) {
+      perror( "accept" );
+      exit( -1 );
+    }
+    switch (con) {
+      case NO_CONCURRENCY:
+      case POOL_OF_THREADS:
+        process( clientSocket );
+        break;
+      case NEW_PROCESS:
+        error = fork();
+        if (!error) {
+          process(clientSocket);
+          close(clientSocket);
+          exit(0);
+        }
+        break;
+      case NEW_THREAD:
+        pthread_t thread;
+        pthread_attr_t attr;
+        pthread_attr_init(&attr);
+        pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+        pthread_create(&thread, &attr, process, (void *)clientSocket);
+        break;
+    }
+    // Close socket
+    close( clientSocket );
+  }
+}
+
 int main(int argc, char * argv[]) {
 
   int port = 8006;
@@ -297,24 +337,11 @@ int main(int argc, char * argv[]) {
     exit( -1 );
   }
 
-  while ( 1 ) {
-
-    // Accept incoming connections
-    struct sockaddr_in clientIPAddress;
-    int alen = sizeof( clientIPAddress );
-    int clientSocket = accept( serverSocket,
-			      (struct sockaddr *)&clientIPAddress,
-			      (socklen_t*)&alen);
-
-    if ( clientSocket < 0 ) {
-      perror( "accept" );
-      exit( -1 );
+  if (con == POOL_OF_THREADS) {
+    pthread_t thread[5];
+    for (int i = 0; i < 5; i++) {
+      pthread_create(&thread[i], NULL, atomic, serverSocket);
     }
-
-    // Process request.
-    process( clientSocket );
-
-    // Close socket
-    close( clientSocket );
   }
+  atomic(serverSocket, con);
 }
