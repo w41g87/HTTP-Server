@@ -175,7 +175,8 @@ string addDoc(string output, int fd) {
   return output;
 }
 
-void process(int skt) {
+void process(void * arg) {
+  int skt = *(int *)arg;
   int err = NO_ERR;
   int fd = -1;
   string type = string("text/plain");
@@ -199,7 +200,9 @@ void process(int skt) {
   writeOutput(skt, addDoc(output, fd));
 }
 
-void atomic(int serverSocket, int con) {
+void atomic(void * arg1, void * arg2) {
+  int serverSocket = *(int *)arg1;
+  int con = *(int *)arg2;
   while ( 1 ) {
     // Accept incoming connections
     struct sockaddr_in clientIPAddress;
@@ -215,12 +218,12 @@ void atomic(int serverSocket, int con) {
     switch (con) {
       case NO_CONCURRENCY:
       case POOL_OF_THREADS:
-        process( clientSocket );
+        process( &clientSocket );
         break;
       case NEW_PROCESS:
         error = fork();
         if (!error) {
-          process(clientSocket);
+          process(&clientSocket);
           close(clientSocket);
           exit(0);
         }
@@ -228,9 +231,10 @@ void atomic(int serverSocket, int con) {
       case NEW_THREAD:
         pthread_t thread;
         pthread_attr_t attr;
+
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-        pthread_create(&thread, &attr, process, clientSocket);
+        pthread_create(&thread, &attr, process, (void*)&clientSocket);
         break;
     }
     // Close socket
@@ -340,7 +344,7 @@ int main(int argc, char * argv[]) {
   if (con == POOL_OF_THREADS) {
     pthread_t thread[5];
     for (int i = 0; i < 5; i++) {
-      pthread_create(&thread[i], NULL, atomic, serverSocket, con);
+      pthread_create(&thread[i], NULL, atomic, (void *)&serverSocket, (void *)&con);
     }
   }
   atomic(serverSocket, con);
