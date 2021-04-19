@@ -230,7 +230,7 @@ void atomic(int serverSocket, int con) {
         pthread_attr_t attr;
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-        pthread_create(&thread, &attr, process, (void *)clientSocket);
+        pthread_create(&thread, &attr, process, clientSocket);
         break;
     }
     // Close socket
@@ -340,7 +340,7 @@ int main(int argc, char * argv[]) {
   if (con == POOL_OF_THREADS) {
     pthread_t thread[5];
     for (int i = 0; i < 5; i++) {
-      pthread_create(&thread[i], NULL, atomic, serverSocket);
+      pthread_create(&thread[i], NULL, atomic, serverSocket, con);
     }
   }
   atomic(serverSocket, con);
