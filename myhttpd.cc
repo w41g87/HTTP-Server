@@ -203,10 +203,10 @@ int main(int argc, char * argv[]) {
   int con = NO_CONCURRENCY;
 
   if (argc == 2) {
-    if (!strcmp(arg[1], "-f")) con = NEW_PROCESS;
-    else if (!strcmp(arg[1], "-t")) con = NEW_THREAD;
-    else if (!strcmp(arg[1], "-p")) con = POOL_OF_THREADS;
-    else if (!strcmp(arg[1], "--help")) {
+    if (!strcmp(argv[1], "-f")) con = NEW_PROCESS;
+    else if (!strcmp(argv[1], "-t")) con = NEW_THREAD;
+    else if (!strcmp(argv[1], "-p")) con = POOL_OF_THREADS;
+    else if (!strcmp(argv[1], "--help")) {
       cout << usage << endl;
       exit(0);
     } else {
@@ -222,9 +222,9 @@ int main(int argc, char * argv[]) {
       }
     }
   } else if (argc == 3) {
-    if (!strcmp(arg[1], "-f")) con = NEW_PROCESS;
-    else if (!strcmp(arg[1], "-t")) con = NEW_THREAD;
-    else if (!strcmp(arg[1], "-p")) con = POOL_OF_THREADS;
+    if (!strcmp(argv[1], "-f")) con = NEW_PROCESS;
+    else if (!strcmp(argv[1], "-t")) con = NEW_THREAD;
+    else if (!strcmp(argv[1], "-p")) con = POOL_OF_THREADS;
     else {
       cout << usage << endl;
       exit(0);
