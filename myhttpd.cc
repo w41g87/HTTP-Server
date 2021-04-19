@@ -204,6 +204,8 @@ void atomic(void * arg) {
   int serverSocket = ((int *)arg)[0];
   int con = ((int *)arg)[1];
   free(arg);
+  int error;
+  
   while ( 1 ) {
     // Accept incoming connections
     struct sockaddr_in clientIPAddress;
@@ -222,7 +224,7 @@ void atomic(void * arg) {
         process( &clientSocket );
         break;
       case NEW_PROCESS: 
-        int error = fork();
+        error = fork();
         if (!error) {
           process(&clientSocket);
           close(clientSocket);
