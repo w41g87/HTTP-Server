@@ -77,7 +77,7 @@ void intHandler(int signum) {
       wait(NULL);
       break;
     case POOL_OF_THREADS:
-      for (int i = 0; i < 5; i++) pthread_join(thread[i], NULL);
+      for (int i = 0; i < 5; i++) pthread_cancel(thread[i]);
       break;
   }
   exit(0);
