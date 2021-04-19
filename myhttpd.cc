@@ -208,6 +208,7 @@ void process(int skt) {
 
 void atomic(void * arg) {
   int serverSocket = ((int *)arg)[0];
+  cout << serverSocket << endl;
   int con = ((int *)arg)[1];
   free(arg);
   int error;
