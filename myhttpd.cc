@@ -203,6 +203,7 @@ void process(int skt) {
   string output = initOutput(err, type);
   cout << output << endl;
   writeOutput(skt, addDoc(output, fd));
+  close(skt);
 }
 
 void atomic(void * arg) {
@@ -233,9 +234,9 @@ void atomic(void * arg) {
         error = fork();
         if (!error) {
           process(clientSocket);
-          close(clientSocket);
           exit(0);
         }
+        close( clientSocket );
         break;
       case NEW_THREAD:
         pthread_t thread;
@@ -247,8 +248,6 @@ void atomic(void * arg) {
         pthread_create(&thread, &attr, (void * (*)(void *)) process, (void*)clientSocket);
         break;
     }
-    // Close socket
-    close( clientSocket );
   }
 }
 
