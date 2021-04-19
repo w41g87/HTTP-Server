@@ -131,7 +131,7 @@ bool verify (string str) {
 int openFile(string fileName) {
   string realPath = string("http-root-dir/htdocs");
   cout << fileName << endl;
-  if (matchStart(fileName, "..")) return -1;
+  if (matchStart(fileName, "/..")) return -1;
   if (!fileName.compare("/")) realPath.append("/index.html");
   else realPath.append(fileName);
   if (access(realPath.c_str(), F_OK)) return -1;
