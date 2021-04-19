@@ -290,7 +290,7 @@ int main(int argc, char * argv[]) {
       cout << usage << endl;
       exit(0);
     }
-  } else {
+  } else if (argc > 3) {
     cout << usage << endl;
     exit(0);
   }
