@@ -347,7 +347,7 @@ int main(int argc, char * argv[]) {
       exit(2);
   }
 
-  if(sigaction(SIGCHLD, &c, NULL)){
+  if(sigaction(SIGINT, &c, NULL)){
       perror("sigaction");
       exit(2);
   }
