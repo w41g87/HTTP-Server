@@ -80,6 +80,7 @@ void intHandler(int signum) {
       for (int i = 0; i < 5; i++) pthread_cancel(thread[i]);
       break;
   }
+  close(serverSocket);
   exit(0);
 }
 
