@@ -221,15 +221,14 @@ void atomic(void * arg) {
       case POOL_OF_THREADS:
         process( &clientSocket );
         break;
-      case NEW_PROCESS: {
-          int error = fork();
-          if (!error) {
-            process(&clientSocket);
-            close(clientSocket);
-            exit(0);
-          }
-          break;
+      case NEW_PROCESS: 
+        int error = fork();
+        if (!error) {
+          process(&clientSocket);
+          close(clientSocket);
+          exit(0);
         }
+        break;
       case NEW_THREAD:
         pthread_t thread;
         pthread_attr_t attr;
