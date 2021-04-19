@@ -39,6 +39,12 @@ string credential = "dXNlcjpxd2VydHk=";
 
 int QueueLength = 5;
 
+pthread_t thread[5];
+
+int numThreads = 0;
+
+int concur = NO_CONCURRENCY;
+
 enum Error {
   NO_ERR, 
   FILE_NOT_FOUND, 
@@ -60,6 +66,18 @@ void pipeHandler(int signum) {
 void chldHandler(int signum) {
   int e;
   while((e = wait(NULL)) > 0) if (isatty(0)) printf("%d exited\n", e);
+}
+
+void intHandler(int signum) {
+  switch (concur) {
+    case NEW_PROCESS:
+      wait(NULL);
+      break;
+    case POOL_OF_THREADS:
+      for (int i = 0; i < 5; i++) pthread_join(thread[i], NULL);
+      break;
+  }
+  exit(0);
 }
 
 bool matchEnd (string const &str, string const &end) {
@@ -208,10 +226,7 @@ void process(int skt) {
   close(skt);
 }
 
-void atomic(void * arg) {
-  int serverSocket = ((int *)arg)[0];
-  //cout << serverSocket << endl;
-  int con = ((int *)arg)[1];
+void atomic(int serverSocket) {
   int error;
 
   while ( 1 ) {
@@ -226,7 +241,7 @@ void atomic(void * arg) {
       perror( "accept" );
       exit( -1 );
     }
-    switch (con) {
+    switch (concur) {
       case NO_CONCURRENCY:
       case POOL_OF_THREADS:
         process( clientSocket );
@@ -256,12 +271,11 @@ void atomic(void * arg) {
 int main(int argc, char * argv[]) {
 
   int port = 8006;
-  int con = NO_CONCURRENCY;
 
   if (argc == 2) {
-    if (!strcmp(argv[1], "-f")) con = NEW_PROCESS;
-    else if (!strcmp(argv[1], "-t")) con = NEW_THREAD;
-    else if (!strcmp(argv[1], "-p")) con = POOL_OF_THREADS;
+    if (!strcmp(argv[1], "-f")) concur = NEW_PROCESS;
+    else if (!strcmp(argv[1], "-t")) concur = NEW_THREAD;
+    else if (!strcmp(argv[1], "-p")) concur = POOL_OF_THREADS;
     else if (!strcmp(argv[1], "--help")) {
       cout << usage << endl;
       exit(0);
@@ -278,9 +292,9 @@ int main(int argc, char * argv[]) {
       }
     }
   } else if (argc == 3) {
-    if (!strcmp(argv[1], "-f")) con = NEW_PROCESS;
-    else if (!strcmp(argv[1], "-t")) con = NEW_THREAD;
-    else if (!strcmp(argv[1], "-p")) con = POOL_OF_THREADS;
+    if (!strcmp(argv[1], "-f")) concur = NEW_PROCESS;
+    else if (!strcmp(argv[1], "-t")) concur = NEW_THREAD;
+    else if (!strcmp(argv[1], "-p")) concur = POOL_OF_THREADS;
     else {
       cout << usage << endl;
       exit(0);
@@ -305,13 +319,18 @@ int main(int argc, char * argv[]) {
 
 
   // Signal handling for SIGPIPE
-  struct sigaction pipe, chld;
+  struct sigaction pipe, chld, c;
   pipe.sa_handler = pipeHandler;
   sigemptyset(&pipe.sa_mask);
   pipe.sa_flags = SA_RESTART;
+  
   chld.sa_handler = chldHandler;
   sigemptyset(&chld.sa_mask);
   chld.sa_flags = SA_RESTART;
+
+  c.sa_handler = intHandler;
+  sigemptyset(&c.sa_mask);
+  c.sa_flags = SA_RESTART;
 
   if(sigaction(SIGPIPE, &pipe, NULL)){
       perror("sigaction");
@@ -324,6 +343,12 @@ int main(int argc, char * argv[]) {
       perror("sigaction");
       exit(2);
   }
+
+  if(sigaction(SIGCHLD, &c, NULL)){
+      perror("sigaction");
+      exit(2);
+  }
+
 
   // Get the port from the arguments
   argc > 1 && argv[argc - 1] ? atoi( argv[argc - 1] ) : 8006;
@@ -364,14 +389,10 @@ int main(int argc, char * argv[]) {
     perror("listen");
     exit( -1 );
   }
-  int arg[2];
-  arg[0] = serverSocket;
-  arg[1] = con;
-  if (con == POOL_OF_THREADS) {
-    pthread_t thread[5];
+  if (concur == POOL_OF_THREADS) {
     for (int i = 0; i < 5; i++) {
-      cout << "POS" << endl;
-      pthread_create(&thread[i], NULL, (void * (*)(void *))atomic, (void *)arg);
+      numThreads++;
+      pthread_create(&thread[i], NULL, (void * (*)(void *))atomic, (void *)serverSocket);
     }
   }
   atomic((void *) arg);
