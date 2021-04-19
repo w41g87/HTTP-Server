@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <iostream>
+#include <signal.h>
 
 const char * usage =
 "                                                               \n"
@@ -250,7 +251,7 @@ int main(int argc, char * argv[]) {
   sigemptyset(&sig.sa_mask);
   sig.sa_flags = SA_RESTART;
 
-  if(sigaction(SIGPIPE, &c, NULL)){
+  if(sigaction(SIGPIPE, &sig, NULL)){
       perror("sigaction");
       exit(2);
   }
