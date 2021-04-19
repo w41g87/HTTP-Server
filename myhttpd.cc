@@ -194,6 +194,7 @@ void process(int skt) {
     else if (matchEnd(fileName, string(".gif"))) type = string("image/gif");
   }
   string output = initOutput(err, type);
+  cout << output << endl;
   writeOutput(skt, addDoc(output, fd));
 }
 
