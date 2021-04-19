@@ -43,7 +43,7 @@ pthread_t thread[5];
 
 int numThreads = 0;
 
-int concur = NO_CONCURRENCY;
+
 
 enum Error {
   NO_ERR, 
@@ -58,6 +58,8 @@ enum Param {
   NEW_THREAD,
   POOL_OF_THREADS
 };
+
+int concur = NO_CONCURRENCY;
 
 void pipeHandler(int signum) {
   cout << "SIGPIPE" << endl;
@@ -395,5 +397,5 @@ int main(int argc, char * argv[]) {
       pthread_create(&thread[i], NULL, (void * (*)(void *))atomic, (void *)serverSocket);
     }
   }
-  atomic((void *) arg);
+  atomic(serverSocket);
 }
