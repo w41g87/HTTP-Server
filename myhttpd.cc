@@ -399,5 +399,5 @@ int main(int argc, char * argv[]) {
       pthread_create(&thread[i], NULL, (void * (*)(void *))atomic, NULL);
     }
   }
-  atomic(serverSocket);
+  atomic();
 }
