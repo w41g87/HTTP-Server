@@ -176,7 +176,7 @@ string addDoc(string output, int fd) {
 }
 
 void process(void * arg) {
-  int skt = *(int *)arg;
+  int skt = *((int *)arg);
   int err = NO_ERR;
   int fd = -1;
   string type = string("text/plain");
@@ -201,8 +201,8 @@ void process(void * arg) {
 }
 
 void atomic(void * arg) {
-  int serverSocket = (int *)arg[0];
-  int con = (int *)arg[1];
+  int serverSocket = ((int *)arg)[0];
+  int con = ((int *)arg)[1];
   free(arg);
   while ( 1 ) {
     // Accept incoming connections
