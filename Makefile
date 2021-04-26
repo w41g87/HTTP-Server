@@ -1,4 +1,5 @@
 CXX = g++ -fPIC -pthread
+CC = gcc
 NETLIBS= -lnsl
 
 all: git-commit myhttpd daytime-server use-dlopen hello.so
@@ -13,7 +14,13 @@ use-dlopen: use-dlopen.o
 	$(CXX) -o $@ $@.o $(NETLIBS) -ldl
 
 hello.so: hello.o
-	ld -G -o hello.so hello.o
+	ld -G -o http-root-dir/cgi-bin/hello.so hello.o
+
+jj-mod.so: jj.o util.o
+	ld -G -o http-root-dir/cgi-bin/jj-mod.so jj.o util.o
+
+.c.o: 
+	$(CC) -c $<
 
 %.o: %.cc
 	@echo 'Building $@ from $<'
