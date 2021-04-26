@@ -191,10 +191,10 @@ string dirToTable(DIR * dir, int sort, int order) {
         return (order == ASC && a._size > b._size) || (order == DESC && a._size <= b._size);
         break;
       case MOD_TIME:
-        return (order == ASC && a._mtime > b._mtime) || (order == DESC && a._mtime <= b._mtime);
+        return (order == ASC && a._mtime.tv_sec > b._mtime.tv_sec) || (order == DESC && a._mtime.tv_sec <= b._mtime.tv_sec);
         break;
       case CREAT_TIME:
-        return (order == ASC && a._ctime > b._ctime) || (order == DESC && a._ctime <= b._ctime);
+        return (order == ASC && a._ctime.tv_sec > b._ctime.tv_sec) || (order == DESC && a._ctime.tv_sec <= b._ctime.tv_sec);
         break;
     }
   }
