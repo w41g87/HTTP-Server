@@ -73,7 +73,45 @@ enum Operation {
   SO
 };
 
+enum Sort {
+  NAME, 
+  SIZE, 
+  MOD_TIME, 
+  CREAT_TIME
+};
+
+enum Order {
+  ASC, 
+  DESC
+};
+
+enum FileType {
+  UNKNOWN, 
+  FOLDER, 
+  TEXT, 
+  TAR, 
+  BINARY, 
+  AUDIO, 
+  VIDEO, 
+  IMAGE
+};
+
 int concur = NO_CONCURRENCY;
+
+Class Document {
+  public:
+    Document() {
+      _type = UNKNOWN;
+    }
+    string _name;
+    off_t _size;
+    int _type;
+    string modTime() { return string(ctime(&_mtime)); }
+    string creatTime() { return string(ctime(&_ctime)); }
+    struct timespec _mtime;
+    struct timespec _ctime;
+
+}
 
 void pipeHandler(int signum) {
   cout << "SIGPIPE" << endl;
@@ -127,6 +165,254 @@ int opType (string str) {
   } else return DOC;
 }
 
+int getFileType(const char * name) {
+  string str = string(name);
+  if (matchEnd(str, ".txt") || matchEnd(str, ".c") || matchEnd(str, ".cc") ||
+    matchEnd(str, ".pl") || matchEnd(str, ".tcl") || matchEnd(str, ".h")) return TEXT;
+  else if (matchEnd(str, ".xbm") || matchEnd(str, ".gif") || matchEnd(str, ".jpg") ||
+    matchEnd(str, ".jpeg") || matchEnd(str, ".png") || matchEnd(str, ".bmp") ||
+    matchEnd(str, ".tiff")) return IMAGE;
+  else if (matchEnd(str, ".o") || matchEnd(str, ".so") || matchEnd(str, ".bin")) return BINARY;
+  else if (matchEnd(str, ".wav") || matchEnd(str, ".flac") || matchEnd(str, ".mp3") ||
+    matchEnd(str, ".m4a") || matchEnd(str, ".ogg") || matchEnd(str, ".wma")) return AUDIO;
+  else if (matchEnd(str, ".mp4") || matchEnd(str, ".mpeg") || matchEnd(str, ".avi") ||
+    matchEnd(str, ".wmv") || matchEnd(str, ".flv") || matchEnd(str, ".webm")) return VIDEO;
+  else if (matchEnd(str, ".tar")) return TAR;
+  else return UNKNOWN;
+}
+
+string dirToTable(DIR * dir, int sort, int order) {
+  auto comp = [sort, order](Document a, Document b) {
+    switch (sort) {
+      case NAME:
+        return (order == ASC && a._name.compare(b._name) > 0) || (order == DESC && a._name.compare(b._name) <= 0);
+        break;
+      case SIZE:
+        return (order == ASC && a._size > b._size) || (order == DESC && a._size <= b._size);
+        break;
+      case MOD_TIME:
+        return (order == ASC && a._mtime > b._mtime) || (order == DESC && a._mtime <= b._mtime);
+        break;
+      case CREAT_TIME:
+        return (order == ASC && a._ctime > b._ctime) || (order == DESC && a._ctime <= b._ctime);
+        break;
+    }
+  }
+  
+  struct dirent * ent;
+  priority_queue<Document, vector<Document>, decltype(comp)> q(comp);
+  string output = string();
+
+  while ((ent = readdir(dir)) != NULL) {
+    char *name = ent->d_name;
+    unsigned char type = ent->d_type;
+    if (strcmp(name, ".") && strcmp(name, "..")) {
+        Document doc = Document();
+        doc._name = string(name);
+        if (type == DT_DIR) doc.type = FOLDER;
+        else doc._type = getFileType(name);
+        struct stat st;
+        stat(name, &st);
+        doc._size = st.st_size;
+        doc._mtime = st.st_mtim;
+        doc._ctime = st.st_ctim;
+
+        q.push(doc);
+    } 
+  }
+  while(!q.empty()) {
+    Document doc = q.top();
+    output.append("<tr>\n");
+      output.append("<td valign=\"top\">\n");
+        output.append("<img src=\"/icons/");
+        switch (doc._type) {
+          case UNKNOWN:
+            output.append("unknown.gif\" alt=\"[FILE]\">\n");
+            break;
+          case FOLDER:
+            output.append("menu.gif\" alt=\"[DIR]\">\n");
+          break;
+          case TEXT:
+            output.append("text.gif\" alt=\"[TXT]\">\n");
+          break;
+          case TAR:
+            output.append("tar.gif\" alt=\"[TAR]\">\n);
+          break;
+          case BINARY:
+            output.append("binary.gif\" alt=\"[BIN]\">\n");
+          break;
+          case AUDIO:
+            output.append("sound.gif\" alt=\"[AUDIO]\">\n");
+          break;
+          case VIDEO:
+            output.append("movie.gif\" alt=\"[VIDEO]\">\n");
+          break;
+          case IMAGE:
+            output.append("image.gif\" alt=\"[IMAGE]\">\n");
+          break;
+        }
+      output.append("</td>\n");
+
+      output.append("<td>\n");
+        output.append("<a href=\"" + doc._name);
+        if (doc._type == FOLDER) output.append("/");
+        output.append("\">" + doc._name);
+        if (doc._type == FOLDER) output.append("/");
+        output.append("</a>\n");
+      output.append("</td>\n");
+
+      output.append("<td align=\"right\">\n");
+        output.append(doc._type == FOLDER ? "  - " : doc._size);
+      output.append("B\n</td>\n");
+
+      output.append("<td align=\"right\">\n");
+        output.append(doc.modTime());
+      output.append("\n</td>\n");
+
+      output.append("<td align=\"right\">\n");
+        output.append(doc.creatTime());
+      output.append("\n</td>\n");
+
+    output.append("</tr>\n");
+    q.pop();
+  }
+}
+
+string genHtmlFromDir(string realPath, string linkPath) {
+  DIR * dir = opendir(realPath);
+  if (!dir) return string();
+  string query = string(getenv("QUERY_STRING"));
+  int sort, order, pos = 0;
+
+  do {
+    query = query.substr(pos);
+    if (matchStart(query, "sort=")) {
+      query = query.substr(query.find('=') + 1);
+      if (matchStart(query("name"))) sort = NAME;
+      else if (matchStart(query("mod-time"))) sort = MOD_TIME;
+      else if (matchStart(query("creat-time"))) sort = CREAT_TIME;
+      else if (matchStart(query("size"))) sort = size;
+      else assert(0);
+    } else if (matchStart(query, "order=")) {
+      query = query.substr(query.find('=') + 1);
+      if (matchStart(query("asc"))) order = ASC;
+      else if (matchStart(query("desc"))) order = DESC;
+      else assert(0);
+    }
+    pos = query.find('&') + 1;
+  } while(pos - 1 != string::npos);
+  
+
+  string html = string("<!DOCTYPE html>\n");
+  html.append("<html>\n");
+    html.append("<head>\n");
+      html.append("<meta charset="UTF-8"\n");
+      html.append("<title>Directory Content of " + realPath.substr(realPath.find('/') + 1) + "</title>\n");
+    html.append("</head>\n");
+
+    html.append("<body>\n");
+      html.append("<h1>Directory Content of " + linkPath + "</h1>\n");
+      html.append("<table>\n");
+      html.append("<tbody>\n");
+
+        html.append("<tr>\n");
+
+          html.append("<th valign=\"top\">\n");
+          html.append("<img src=\"/icons/blank.gif\" alt=\"[ICO]\">\n");
+          html.append("</th>\n");
+
+          html.append("<th>\n");
+          if (sort == NAME) {
+            if (order == ASC) html.append("<a href=\"?sort=name&order=desc\">Name &#9650;</a>\n");
+            else if (order == DESC) html.append("<a href=\"?sort=name&order=asc\">Name &#9660;</a>\n");
+          } else html.append("<a href=\"?sort=name&order=asc\">Name</a>\n");
+          html.append("</th>\n");
+
+          html.append("<th>\n");
+          if (sort == SIZE) {
+            if (order == ASC) html.append("<a href=\"?sort=size&order=desc\">Size &#9650;</a>\n");
+            else if (order == DESC) html.append("<a href=\"?sort=size&order=asc\">Size &#9660;</a>\n");
+          } else html.append("<a href=\"?sort=size&order=asc\">Size</a>\n");
+          html.append("</th>\n");
+
+          html.append("<th>\n");
+          if (sort == MOD_TIME) {
+            if (order == ASC) html.append("<a href=\"?sort=mod_time&order=desc\">Last Modified &#9650;</a>\n");
+            else if (order == DESC) html.append("<a href=\"?sort=mod_time&order=asc\">Last Modified &#9660;</a>\n");
+          } else html.append("<a href=\"?sort=mod_time&order=asc\">Last Modified</a>\n");
+          html.append("</th>\n");
+
+          html.append("<th>\n");
+          if (sort == MOD_TIME) {
+            if (order == ASC) html.append("<a href=\"?sort=creat_time&order=desc\">Created &#9650;</a>\n");
+            else if (order == DESC) html.append("<a href=\"?sort=creat_time&order=asc\">Created &#9660;</a>\n");
+          } else html.append("<a href=\"?sort=creat_time&order=asc\">Created</a>\n");
+          html.append("</th>\n");
+
+        html.append("</tr>\n");
+
+        html.append("<tr>\n");
+
+          html.append("<th colspan=\"5\">\n");
+          html.append("<hr>\n");
+          html.append("</th>\n");
+
+        html.append("</tr>\n");
+
+        html.append("<tr>\n");
+
+          html.append("<td valign=\"top\">\n");
+          html.append("<img src=\"/icons/back.gif\" alt=\"[PARENTDIR]\">\n");
+          html.append("</td>\n");
+
+          html.append("<td>\n");
+          html.append("a href=\"" + linkPath.substr(0, linkPath.find_last_of('/') + 1) +
+            "\">Parent Directory</a>");
+          html.append("</td>\n");
+
+          html.append("<td align=\"right\">\n");
+          html.append("  - ")
+          html.append("</td>\n");
+
+          html.append("<td>\n");
+          html.append("&nbsp;")
+          html.append("</td>\n");
+
+          html.append("<td>\n");
+          html.append("&nbsp;")
+          html.append("</td>\n");
+
+        html.append("</tr>\n");
+
+        html.append(dirToTable(dir));
+
+        html.append("<tr>\n");
+
+          html.append("<th colspan=\"5\">\n");
+          html.append("<hr>\n");
+          html.append("</th>\n");
+
+        html.append("</tr>\n");
+      
+      html.append("</tbody>")
+      html.append("</table>\n");
+    html.append("</body>\n");
+
+  html.append("</html>\n");
+
+  
+  if((!cl) || (!cl[0]))
+      dump_form();
+
+  tmpnam(tfile);
+  if(!(tfp=fopen(tfile,"w"))) {
+      printf("<TITLE>Server Error</TITLE>%c",LF);
+      printf("<H1>Server Error</H1>%c",LF);
+      printf("Server unable to get a temporary file. Please try again later.<P>%c",LF);
+      exit(1);
+  }
+}
+
 string getContentByHeader(string str, string header) {
   // cout << (int)str.at(0) << endl;
   // cout << (int)str.at(1) << endl;
@@ -148,18 +434,6 @@ bool verify (string str) {
   if (credential.compare(login.substr(login.find(' ') + 1))) return false;
   cout << "verified" << endl;
   return true;
-}
-
-int openFile(string fileName) {
-  string realPath = string("http-root-dir/htdocs");
-  cout << fileName << endl;
-  if (fileName.find("..") != string::npos) return -2;
-  if (!fileName.compare("/")) realPath.append("/index.html");
-  else realPath.append(fileName);
-  int dir = fdopendir(realPath);
-  if (dir) return dir;
-  if (access(realPath.c_str(), F_OK)) return -1;
-  else return open(realPath.c_str(), O_RDONLY);
 }
 
 string extractMid(string str) {
@@ -267,29 +541,69 @@ void process(int skt) {
   else {
     string mid = extractMid(input);
     string fileName = extractFileName(mid);
+    string realPath = string("http-root-dir");
+    int op = opType(fileName);
+
+    if (matchEnd(fileName, string("/"))) fileName.pop_back();
 
     if (req == GET) query = getQuery(mid);
     else if (req == POST) query = postQuery(skt);
 
-    int op = opType(fileName);
+    if (op == FILE) {
+      if (!matchStart(fileName, "/icons")) realPath.append("/htdocs")
+      realPath.append(fileName.empty() ? "/index.html" : fileName);
+      if (is_directory(realPath)) op = DIRECTORY;
+    } else realPath.append(fileName);
 
     switch (op) {
       case DOC:
-        if ((fd = openFile(fileName)) < 0) {
-          if (fd == -1) err = FILE_NOT_FOUND;
-          if (fd == -2) err = INVALID_REQUEST;
-        } else if (matchEnd(fileName, string(".html")) || !fileName.compare("/")) type = string("text/html");
-        else if (matchEnd(fileName, string(".gif"))) type = string("image/gif");
-        else if (matchEnd(fileName, string(".svg"))) type = string("image/svg+xml");
+        cout << realPath << endl;
+        if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
+        else if (access(realPath.c_str(), F_OK)) err = FILE_NOT_FOUND;
+        else {
+          fd = open(realPath.c_str(), O_RDONLY);
+          if (matchEnd(realPath, string(".html"))) type = string("text/html");
+          else if (matchEnd(realPath, string(".gif"))) type = string("image/gif");
+          else if (matchEnd(realPath, string(".svg"))) type = string("image/svg+xml");
+        }
+
+        string output = initOutput(err, type);
+        writeOutput(skt, addDoc(output, fd));
+        close(fd);
+        break;
+      case DIRECTORY:
+        if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
+        else if (access(realPath.c_str(), F_OK)) err = FILE_NOT_FOUND;
+        else {
+          if (setenv("QUERY_STRING", query.empty() ? "sort=name&order=asc" : query.c_str(), 1)) perror("setenv");
+          type = string("text/html");
+        }
+
+        string output = initOutput(err, type);
+        writeOutput(skt, output.append(genHtmlFromDir(realPath, fileName)));
+        break;
+      case EXE:
+        if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
+        else if (access(realPath.c_str(), F_OK)) err = FILE_NOT_FOUND;
+        else if (setenv("QUERY_STRING", query.c_str(), 1)) perror("setenv");
+        int pid = fork();
+        if (pid == 0) {
+          close(2);
+          close(0);
+          dup2(1, skt);
+          execvp(realPath, NULL);
+        }
+        break;
+      case SO:
+        if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
+        else if (access(realPath.c_str(), F_OK)) err = FILE_NOT_FOUND;
+        else if (setenv("QUERY_STRING", query.c_str(), 1)) perror("setenv");
+
         break;
     }
-
-    
   }
-  string output = initOutput(err, type);
+  
   cout << output << endl;
-  writeOutput(skt, addDoc(output, fd));
-  close(fd);
   close(skt);
 }
 
