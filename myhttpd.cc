@@ -109,8 +109,8 @@ class Document {
     string _name;
     off_t _size;
     int _type;
-    string modTime() { return string(ctime(&_mtime)); }
-    string creatTime() { return string(ctime(&_ctime)); }
+    string modTime() { return string(ctime(&_mtime.tv_sec)); }
+    string creatTime() { return string(ctime(&_ctime.tv_sec)); }
     struct timespec _mtime;
     struct timespec _ctime;
 
