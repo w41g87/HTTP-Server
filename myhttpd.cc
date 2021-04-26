@@ -245,25 +245,25 @@ string dirToTable(DIR * dir, int sort, int order) {
             break;
           case FOLDER:
             output.append("menu.gif\" alt=\"[DIR]\">\n");
-          break;
+            break;
           case TEXT:
             output.append("text.gif\" alt=\"[TXT]\">\n");
-          break;
+            break;
           case TAR:
             output.append("tar.gif\" alt=\"[TAR]\">\n");
-          break;
+            break;
           case BINARY:
             output.append("binary.gif\" alt=\"[BIN]\">\n");
-          break;
+            break;
           case AUDIO:
             output.append("sound.gif\" alt=\"[AUDIO]\">\n");
-          break;
+            break;
           case VIDEO:
             output.append("movie.gif\" alt=\"[VIDEO]\">\n");
-          break;
+            break;
           case IMAGE:
             output.append("image.gif\" alt=\"[IMAGE]\">\n");
-          break;
+            break;
         }
       output.append("</td>\n");
 
@@ -290,6 +290,7 @@ string dirToTable(DIR * dir, int sort, int order) {
     output.append("</tr>\n");
     q.pop();
   }
+  cout << "end of table body population (still in function)" << endl;
 }
 
 string genHtmlFromDir(string realPath, string linkPath) {
