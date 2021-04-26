@@ -272,7 +272,7 @@ string dirToTable(DIR * dir, string path, int sort, int order) {
       output.append("</td>\n");
 
       output.append("<td>\n");
-        output.append("<a href=\"" + doc._name);
+        output.append("<a href=\"/" + doc._name);
         if (doc._type == FOLDER) output.append("/");
         output.append("\">" + doc._name);
         if (doc._type == FOLDER) output.append("/");
