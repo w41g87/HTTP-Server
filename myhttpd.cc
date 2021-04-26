@@ -519,10 +519,12 @@ void process(int skt) {
   int req = INVALID;
   int err = NO_ERR;
   int fd = -1;
+  int pid = -1;
   string type = string("text/plain");
   string input = parseInput(skt);
   string query;
   string output;
+
   cout << input << endl;
   // for (int i = 0; i < input.length(); i ++) {
   //   cout << (int)input.at(i) << endl;
@@ -580,7 +582,7 @@ void process(int skt) {
         if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
         else if (access(realPath.c_str(), F_OK)) err = FILE_NOT_FOUND;
         else if (setenv("QUERY_STRING", query.c_str(), 1)) perror("setenv");
-        int pid = fork();
+        pid = fork();
         if (pid == 0) {
           close(2);
           close(0);
