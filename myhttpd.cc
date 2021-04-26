@@ -359,7 +359,7 @@ string genHtmlFromDir(string realPath, string linkPath) {
           html.append("</th>\n");
 
         html.append("</tr>\n");
-
+cout << "end of table head generation" << endl;
         html.append("<tr>\n");
 
           html.append("<th colspan=\"5\">\n");
