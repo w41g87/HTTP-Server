@@ -522,7 +522,7 @@ void process(int skt) {
   string type = string("text/plain");
   string input = parseInput(skt);
   string query;
-
+  string output;
   cout << input << endl;
   // for (int i = 0; i < input.length(); i ++) {
   //   cout << (int)input.at(i) << endl;
@@ -534,7 +534,7 @@ void process(int skt) {
     string mid = extractMid(input);
     string fileName = extractFileName(mid);
     string realPath = string("http-root-dir");
-    string output;
+    
     int op = opType(fileName);
 
     if (matchEnd(fileName, string("/"))) fileName.pop_back();
