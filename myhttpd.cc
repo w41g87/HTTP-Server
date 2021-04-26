@@ -98,7 +98,7 @@ enum FileType {
 
 int concur = NO_CONCURRENCY;
 
-Class Document {
+class Document {
   public:
     Document() {
       _type = UNKNOWN;
@@ -236,7 +236,7 @@ string dirToTable(DIR * dir, int sort, int order) {
             output.append("text.gif\" alt=\"[TXT]\">\n");
           break;
           case TAR:
-            output.append("tar.gif\" alt=\"[TAR]\">\n);
+            output.append("tar.gif\" alt=\"[TAR]\">\n");
           break;
           case BINARY:
             output.append("binary.gif\" alt=\"[BIN]\">\n");
