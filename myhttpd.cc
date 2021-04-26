@@ -288,15 +288,15 @@ string genHtmlFromDir(string realPath, string linkPath) {
     query = query.substr(pos);
     if (matchStart(query, "sort=")) {
       query = query.substr(query.find('=') + 1);
-      if (matchStart(query("name"))) sort = NAME;
-      else if (matchStart(query("mod-time"))) sort = MOD_TIME;
-      else if (matchStart(query("creat-time"))) sort = CREAT_TIME;
-      else if (matchStart(query("size"))) sort = size;
+      if (matchStart(query, "name")) sort = NAME;
+      else if (matchStart(query, "mod-time")) sort = MOD_TIME;
+      else if (matchStart(query, "creat-time")) sort = CREAT_TIME;
+      else if (matchStart(query, "size")) sort = size;
       else assert(0);
     } else if (matchStart(query, "order=")) {
       query = query.substr(query.find('=') + 1);
-      if (matchStart(query("asc"))) order = ASC;
-      else if (matchStart(query("desc"))) order = DESC;
+      if (matchStart(query, "asc")) order = ASC;
+      else if (matchStart(query, "desc")) order = DESC;
       else assert(0);
     }
     pos = query.find('&') + 1;
