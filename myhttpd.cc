@@ -228,8 +228,8 @@ string dirToTable(DIR * dir, string path, int sort, int order) {
         if (type == DT_DIR) doc._type = FOLDER;
         else doc._type = getFileType(name);
         struct stat st;
-        stat(path.c_str(), &st);
-        cout << path << endl;
+        stat(filePath.c_str(), &st);
+        cout << filePath << endl;
         doc._size = st.st_size;
         doc._mtime = st.st_mtim.tv_sec;
         doc._ctime = st.st_ctim.tv_sec;
