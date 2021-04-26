@@ -399,18 +399,9 @@ string genHtmlFromDir(string realPath, string linkPath) {
     html.append("</body>\n");
 
   html.append("</html>\n");
-
   
-  if((!cl) || (!cl[0]))
-      dump_form();
-
-  tmpnam(tfile);
-  if(!(tfp=fopen(tfile,"w"))) {
-      printf("<TITLE>Server Error</TITLE>%c",LF);
-      printf("<H1>Server Error</H1>%c",LF);
-      printf("Server unable to get a temporary file. Please try again later.<P>%c",LF);
-      exit(1);
-  }
+  closedir(dir);
+  return html;
 }
 
 string getContentByHeader(string str, string header) {
