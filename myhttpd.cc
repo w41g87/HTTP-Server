@@ -545,7 +545,7 @@ void process(int skt) {
     else if (req == POST) query = postQuery(skt);
 
     if (op == FILE) {
-      if (!matchStart(fileName, "/icons")) realPath.append("/htdocs")
+      if (!matchStart(fileName, "/icons")) realPath.append("/htdocs");
       realPath.append(fileName.empty() ? "/index.html" : fileName);
       if (is_directory(realPath)) op = DIRECTORY;
     } else realPath.append(fileName);
