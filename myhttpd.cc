@@ -322,98 +322,98 @@ string genHtmlFromDir(string realPath, string linkPath) {
   cout << "start of HTML generation" << endl;
   string html = string("<!DOCTYPE html>\n");
   html.append("<html>\n");
-    html.append("<head>\n");
-      html.append("<meta charset=\"UTF-8\"\n");
-      html.append("<title>Directory Content of " + realPath.substr(realPath.find('/') + 1) + "</title>\n");
-    html.append("</head>\n");
+  html.append("<head>\n");
+  html.append("<meta charset=\"UTF-8\"\n");
+  html.append("<title>Directory Content of " + realPath.substr(realPath.find('/') + 1) + "</title>\n");
+  html.append("</head>\n");
 
-    html.append("<body>\n");
-      html.append("<h1>Directory Content of " + linkPath + "</h1>\n");
-      html.append("<table>\n");
-      html.append("<tbody>\n");
+  html.append("<body>\n");
+  html.append("<h1>Directory Content of " + linkPath + "</h1>\n");
+  html.append("<table>\n");
+  html.append("<tbody>\n");
 
-        html.append("<tr>\n");
+  html.append("<tr>\n");
 
-          html.append("<th valign=\"top\">\n");
-          html.append("<img src=\"/icons/blank.gif\" alt=\"[ICO]\">\n");
-          html.append("</th>\n");
+  html.append("<th valign=\"top\">\n");
+  html.append("<img src=\"/icons/blank.gif\" alt=\"[ICO]\">\n");
+  html.append("</th>\n");
 
-          html.append("<th>\n");
-          if (sort == NAME) {
-            if (order == ASC) html.append("<a href=\"?sort=name&order=desc\">Name &#9650;</a>\n");
-            else if (order == DESC) html.append("<a href=\"?sort=name&order=asc\">Name &#9660;</a>\n");
-          } else html.append("<a href=\"?sort=name&order=asc\">Name</a>\n");
-          html.append("</th>\n");
+  html.append("<th>\n");
+  if (sort == NAME) {
+    if (order == ASC) html.append("<a href=\"?sort=name&order=desc\">Name &#9650;</a>\n");
+    else if (order == DESC) html.append("<a href=\"?sort=name&order=asc\">Name &#9660;</a>\n");
+  } else html.append("<a href=\"?sort=name&order=asc\">Name</a>\n");
+  html.append("</th>\n");
 
-          html.append("<th>\n");
-          if (sort == SIZE) {
-            if (order == ASC) html.append("<a href=\"?sort=size&order=desc\">Size &#9650;</a>\n");
-            else if (order == DESC) html.append("<a href=\"?sort=size&order=asc\">Size &#9660;</a>\n");
-          } else html.append("<a href=\"?sort=size&order=asc\">Size</a>\n");
-          html.append("</th>\n");
+  html.append("<th>\n");
+  if (sort == SIZE) {
+    if (order == ASC) html.append("<a href=\"?sort=size&order=desc\">Size &#9650;</a>\n");
+    else if (order == DESC) html.append("<a href=\"?sort=size&order=asc\">Size &#9660;</a>\n");
+  } else html.append("<a href=\"?sort=size&order=asc\">Size</a>\n");
+  html.append("</th>\n");
 
-          html.append("<th>\n");
-          if (sort == MOD_TIME) {
-            if (order == ASC) html.append("<a href=\"?sort=mod_time&order=desc\">Last Modified &#9650;</a>\n");
-            else if (order == DESC) html.append("<a href=\"?sort=mod_time&order=asc\">Last Modified &#9660;</a>\n");
-          } else html.append("<a href=\"?sort=mod_time&order=asc\">Last Modified</a>\n");
-          html.append("</th>\n");
+  html.append("<th>\n");
+  if (sort == MOD_TIME) {
+    if (order == ASC) html.append("<a href=\"?sort=mod_time&order=desc\">Last Modified &#9650;</a>\n");
+    else if (order == DESC) html.append("<a href=\"?sort=mod_time&order=asc\">Last Modified &#9660;</a>\n");
+  } else html.append("<a href=\"?sort=mod_time&order=asc\">Last Modified</a>\n");
+  html.append("</th>\n");
 
-          html.append("<th>\n");
-          if (sort == MOD_TIME) {
-            if (order == ASC) html.append("<a href=\"?sort=creat_time&order=desc\">Created &#9650;</a>\n");
-            else if (order == DESC) html.append("<a href=\"?sort=creat_time&order=asc\">Created &#9660;</a>\n");
-          } else html.append("<a href=\"?sort=creat_time&order=asc\">Created</a>\n");
-          html.append("</th>\n");
+  html.append("<th>\n");
+  if (sort == MOD_TIME) {
+    if (order == ASC) html.append("<a href=\"?sort=creat_time&order=desc\">Created &#9650;</a>\n");
+    else if (order == DESC) html.append("<a href=\"?sort=creat_time&order=asc\">Created &#9660;</a>\n");
+  } else html.append("<a href=\"?sort=creat_time&order=asc\">Created</a>\n");
+  html.append("</th>\n");
 
-        html.append("</tr>\n");
-cout << "end of table head generation" << endl;
-        html.append("<tr>\n");
+  html.append("</tr>\n");
+  cout << "end of table head generation" << endl;
+  html.append("<tr>\n");
 
-          html.append("<th colspan=\"5\">\n");
-          html.append("<hr>\n");
-          html.append("</th>\n");
+  html.append("<th colspan=\"5\">\n");
+  html.append("<hr>\n");
+  html.append("</th>\n");
 
-        html.append("</tr>\n");
+  html.append("</tr>\n");
 
-        html.append("<tr>\n");
+  html.append("<tr>\n");
 
-          html.append("<td valign=\"top\">\n");
-          html.append("<img src=\"/icons/back.gif\" alt=\"[PARENTDIR]\">\n");
-          html.append("</td>\n");
+  html.append("<td valign=\"top\">\n");
+  html.append("<img src=\"/icons/back.gif\" alt=\"[PARENTDIR]\">\n");
+  html.append("</td>\n");
 
-          html.append("<td>\n");
-          html.append("<a href=\"" + linkPath.substr(0, linkPath.find_last_of('/') + 1) +
-            "\">Parent Directory</a>\n");
-          html.append("</td>\n");
+  html.append("<td>\n");
+  html.append("<a href=\"" + linkPath.substr(0, linkPath.find_last_of('/') + 1) +
+    "\">Parent Directory</a>\n");
+  html.append("</td>\n");
 
-          html.append("<td align=\"right\">\n");
-          html.append("  - ");
-          html.append("</td>\n");
+  html.append("<td align=\"right\">\n");
+  html.append("  - ");
+  html.append("</td>\n");
 
-          html.append("<td>\n");
-          html.append("&nbsp;");
-          html.append("</td>\n");
+  html.append("<td>\n");
+  html.append("&nbsp;");
+  html.append("</td>\n");
 
-          html.append("<td>\n");
-          html.append("&nbsp;");
-          html.append("</td>\n");
+  html.append("<td>\n");
+  html.append("&nbsp;");
+  html.append("</td>\n");
 
-        html.append("</tr>\n");
+  html.append("</tr>\n");
 
-        html.append(dirToTable(dir, sort, order));
-cout << "end of table body generation" << endl;
-        html.append("<tr>\n");
+  html.append(dirToTable(dir, sort, order));
+  cout << "end of table body generation" << endl;
+  html.append("<tr>\n");
 
-          html.append("<th colspan=\"5\">\n");
-          html.append("<hr>\n");
-          html.append("</th>\n");
+  html.append("<th colspan=\"5\">\n");
+  html.append("<hr>\n");
+  html.append("</th>\n");
 
-        html.append("</tr>\n");
-      
-      html.append("</tbody>");
-      html.append("</table>\n");
-    html.append("</body>\n");
+  html.append("</tr>\n");
+
+  html.append("</tbody>");
+  html.append("</table>\n");
+  html.append("</body>\n");
 
   html.append("</html>\n");
   
