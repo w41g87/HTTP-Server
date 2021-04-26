@@ -152,6 +152,12 @@ bool matchStart (string const &str, string const &start) {
   else return false;
 }
 
+bool is_dir(string path) {
+  struct stat st;
+  stat(path.c_str(), &st);
+  return S_ISDIR(st.st_mode);
+}
+
 int requestType (string const &str) {
   int pos = str.find(' ', str.find(' ') + 1);
   if (pos < 0) return INVALID;
@@ -549,7 +555,7 @@ void process(int skt) {
     if (op == DOC) {
       if (!matchStart(fileName, "/icons")) realPath.append("/htdocs");
       realPath.append(fileName.empty() ? "/index.html" : fileName);
-      if (is_directory(realPath)) op = DIRECTORY;
+      if (is_dir(realPath)) op = DIRECTORY;
     } else realPath.append(fileName);
 
     switch (op) {
