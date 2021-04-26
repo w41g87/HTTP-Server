@@ -596,7 +596,7 @@ void process(int skt) {
         
         break;
       case EXE:
-        cout << query << endl;
+        cout << "query" + query << endl;
         if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
         else if (access(realPath.c_str(), F_OK)) err = FILE_NOT_FOUND;
         else if (setenv("QUERY_STRING", query.c_str(), 1)) perror("setenv");
