@@ -409,7 +409,8 @@ string genHtmlFromDir(string realPath, string linkPath) {
 
   html.append("</html>\n");
   
-  closedir(dir);
+  cout << "end of HTML generation" << endl;
+  //closedir(dir);
   return html;
 }
 
