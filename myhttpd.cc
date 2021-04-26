@@ -53,6 +53,14 @@ int numThreads = 0;
 
 int serverSocket;
 
+time_t startTime, minTime, maxTime;
+
+int numReq, fdLog;
+
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
+string minReq, maxReq;
+
 enum Error {
   NO_ERR, 
   FILE_NOT_FOUND, 
@@ -76,6 +84,7 @@ enum Request {
 enum Operation {
   DOC,
   DIRECTORY,
+  STAT,
   EXE, 
   SO
 };
@@ -141,6 +150,7 @@ void intHandler(int signum) {
       break;
   }
   close(serverSocket);
+  close(fdLog);
   exit(0);
 }
 
@@ -175,7 +185,8 @@ int opType (string str) {
   if (matchStart(str, string("/cgi-bin/"))) {
     if (matchEnd(str, ".so")) return SO;
     else return EXE;
-  } else return DOC;
+  } else if (!str.compare("/stat")) return STAT;
+  else return DOC;
 }
 
 int getFileType(const char * name) {
@@ -543,10 +554,15 @@ string addDoc(string output, int fd) {
 }
 
 void process(int skt) {
+  time_t reqBegin, reqEnd;
+
+  time(&reqBegin);
+
   int req = INVALID;
   int err = NO_ERR;
   int fd = -1;
   int pid = -1;
+  
   string type = string("text/plain");
   string input = parseInput(skt);
   string query;
@@ -577,9 +593,15 @@ void process(int skt) {
 
     if (matchEnd(realPath, string("/"))) realPath.pop_back();
 
+    pthread_mutex_lock(&mutex);
+    writeOutput(fdLog, "File or dir requested: ");
+    writeOutput(fdLog, realPath);
+    writeOutput(fdLog, endl);
+    pthread_mutex_unlock(&mutex);
+
     if (realPath.find("..") != string::npos) {
       writeOutput(skt, initOutput(INVALID_REQUEST, type));
-    } else if (access(realPath.c_str(), F_OK)) {
+    } else if (access(realPath.c_str(), F_OK) && op != STAT) {
       writeOutput(skt, initOutput(FILE_NOT_FOUND, type));
     } else {
       switch (op) {
@@ -640,12 +662,37 @@ void process(int skt) {
           httprun( skt, query.c_str());
 
           break;
+        case STAT:
+          output = initOutput(err, type);
+          output.append("Name: Philip Jin\r\n");
+          time_t now;
+          time(&now);
+          output.append("Server uptime: ")
+          output.append(difftime(now, startTime));
+          output.append(" sec\r\nMinimum service time: ");
+          output.append(minTime);
+          output.append(" sec\r\nURL request: " + minReq);
+          output.append("Maximum service time: ");
+          output.append(maxTime);
+          output.append(" sec\r\nURL request: " + maxReq);
+          writeOutput(skt, output);
+          break;
       }
     }
   }
   
   cout << output << endl;
   close(skt);
+  time(&reqEnd);
+  double diff = difftime(reqEnd, reqBegin);
+  if (diff > maxTime) {
+    maxTime = diff;
+    maxReq = string(mid);
+  }
+  if (diff < minTime || minTime == 0) {
+    minTime = diff;
+    minReq = string(mid);
+  }
 }
 
 void atomic() {
@@ -658,6 +705,15 @@ void atomic() {
     int clientSocket = accept( serverSocket,
 			      (struct sockaddr *)&clientIPAddress,
 			      (socklen_t*)&alen);
+
+    char* ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(clientIPAddress.sin_addr), ip, INET_ADDRSTRLEN);
+    pthread_mutex_lock(&mutex);
+    writeOutput(fdLog, "Host IP Address: ");
+    writeOutput(fdLog, ip);
+    writeOutput(fdLog, endl);
+    numReq++;
+    pthread_mutex_unlock(&mutex);
 
     if ( clientSocket < 0 ) {
       perror( "accept" );
@@ -691,6 +747,9 @@ void atomic() {
 }
 
 int main(int argc, char * argv[]) {
+  time(&startTime);
+
+  fdLog = open("./log", O_RDWR | O_APPEND | O_CREAT);
 
   int port = 8006;
 
