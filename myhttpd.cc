@@ -565,6 +565,7 @@ void process(int skt) {
   int err = NO_ERR;
   int fd = -1;
   int pid = -1;
+  void * lib;
   
   string type = string("text/plain");
   string input = parseInput(skt);
@@ -644,7 +645,7 @@ void process(int skt) {
           }
           break;
         case SO:
-          void * lib = dlopen( realPath.c_str(), RTLD_LAZY );
+          lib = dlopen( realPath.c_str(), RTLD_LAZY );
 
           if ( lib == NULL ) {
             fprintf( stderr, "%s not found\n", realPath.c_str());
