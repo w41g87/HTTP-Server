@@ -18,6 +18,7 @@
 #include <time.h>
 #include <dlfcn.h>
 #include <link.h>
+#include <arpa/inet.h>
 
 const char * usage =
 "                                                               \n"
