@@ -605,7 +605,7 @@ void process(int skt) {
         if (pid == 0) {
           close(2);
           close(0);
-          dup2(1, skt);
+          dup2(skt, 1);
           execvp(realPath.c_str(), NULL);
         }
         break;
