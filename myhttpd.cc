@@ -341,7 +341,7 @@ string genHtmlFromDir(string realPath, string linkPath) {
         html.append("<tr>\n");
 
           html.append("<th valign=\"top\">\n");
-          html.append("<img src=\"/icons/blueball.gif\" alt=\"[ICO]\">\n");
+          html.append("<img src=\"/icons/blue_ball.gif\" alt=\"[ICO]\">\n");
           html.append("</th>\n");
 
           html.append("<th>\n");
