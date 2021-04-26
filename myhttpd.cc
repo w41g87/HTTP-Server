@@ -67,7 +67,7 @@ enum Request {
 };
 
 enum Operation {
-  FILE,
+  DOC,
   DIR,
   EXE, 
   SO
@@ -124,7 +124,7 @@ int opType (string str) {
   if (matchStart(str, string("/cgi-bin/"))) {
     if (matchEnd(str, ".so")) return SO;
     else return EXE;
-  } else return FILE;
+  } else return DOC;
 }
 
 string getContentByHeader(string str, string header) {
@@ -274,7 +274,7 @@ void process(int skt) {
     int op = opType(fileName);
 
     switch (op) {
-      case FILE:
+      case DOC:
         if ((fd = openFile(fileName)) < 0) {
           if (fd == -1) err = FILE_NOT_FOUND;
           if (fd == -2) err = INVALID_REQUEST;
