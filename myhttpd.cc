@@ -383,8 +383,8 @@ cout << "end of table head generation" << endl;
           html.append("</td>\n");
 
           html.append("<td>\n");
-          html.append("a href=\"" + linkPath.substr(0, linkPath.find_last_of('/') + 1) +
-            "\">Parent <Directory</a>\n");
+          html.append("<a href=\"" + linkPath.substr(0, linkPath.find_last_of('/') + 1) +
+            "\">Parent Directory</a>\n");
           html.append("</td>\n");
 
           html.append("<td align=\"right\">\n");
