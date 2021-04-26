@@ -190,7 +190,7 @@ int getFileType(const char * name) {
   else return UNKNOWN;
 }
 
-string dirToTable(DIR * dir, string path, int sort, int order) {
+string dirToTable(DIR * dir, string dirPath, string linkPath, int sort, int order) {
   cout << "start of table body generation" << endl;
 
   auto comp = [sort, order](Document a, Document b) {
@@ -218,7 +218,7 @@ string dirToTable(DIR * dir, string path, int sort, int order) {
 
   while ((ent = readdir(dir)) != NULL) {
     char *name = ent->d_name;
-    string filePath = string(path);
+    string filePath = string(dirPath);
     filePath.append("/");
     filePath.append(name);
     unsigned char type = ent->d_type;
@@ -272,7 +272,9 @@ string dirToTable(DIR * dir, string path, int sort, int order) {
       output.append("</td>\n");
 
       output.append("<td>\n");
-        output.append("<a href=\"/" + doc._name);
+        output.append("<a href=\"");
+        if (!matchEnd(linkPath, "/")) output.append(linkPath + "/");
+        output.append(doc._name);
         if (doc._type == FOLDER) output.append("/");
         output.append("\">" + doc._name);
         if (doc._type == FOLDER) output.append("/");
@@ -405,7 +407,7 @@ cout << "end of table head generation" << endl;
 
         html.append("</tr>\n");
 
-        html.append(dirToTable(dir, realPath, sort, order));
+        html.append(dirToTable(dir, realPath, linkPath, sort, order));
 cout << "end of table body generation" << endl;
         html.append("<tr>\n");
 
@@ -560,8 +562,6 @@ void process(int skt) {
     
     int op = opType(fileName);
 
-    //if (matchEnd(fileName, string("/"))) fileName.pop_back();
-
     if (req == GET) query = getQuery(mid);
     else if (req == POST) query = postQuery(skt);
 
@@ -570,6 +570,8 @@ void process(int skt) {
       realPath.append(fileName.empty() ? "/index.html" : fileName);
       if (is_dir(realPath)) op = DIRECTORY;
     } else realPath.append(fileName);
+
+    if (matchEnd(realPath, string("/"))) realPath.pop_back();
 
     switch (op) {
       case DOC:
