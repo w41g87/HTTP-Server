@@ -59,7 +59,24 @@ enum Param {
   POOL_OF_THREADS
 };
 
+enum Request {
+  INVALID, 
+  GET, 
+  POST
+};
+
+enum Operation {
+  FILE,
+  DIR,
+  EXE, 
+  SO
+};
+
 int concur = NO_CONCURRENCY;
+
+Class File {
+
+}
 
 void pipeHandler(int signum) {
   cout << "SIGPIPE" << endl;
@@ -97,12 +114,20 @@ bool matchStart (string const &str, string const &start) {
   else return false;
 }
 
-bool validate (string const &str) {
-  if (!matchStart(str, string("GET"))) return false;
+int requestType (string const &str) {
   int pos = str.find(' ', str.find(' ') + 1);
-  if (pos < 0) return false;
-  if (!matchStart(str.substr(pos + 1), "HTTP/1.1")) return false;
-  return true;
+  if (pos < 0) return INVALID;
+  if (!matchStart(str.substr(pos + 1), "HTTP/1.1")) return INVALID;
+  if (matchStart(str, string("GET"))) return GET;
+  else if (matchStart(str, string("POST"))) return POST;
+  else return INVALID;
+}
+
+int opType (string str) {
+  if (matchStart(str, string("/cgi-bin/"))) {
+    if (matchEnd(str, ".so")) return SO;
+    else return EXE;
+  } else return FILE;
 }
 
 string getContentByHeader(string str, string header) {
@@ -131,17 +156,39 @@ bool verify (string str) {
 int openFile(string fileName) {
   string realPath = string("http-root-dir/htdocs");
   cout << fileName << endl;
-  if (fileName.find("..") != string::npos) return -1;
+  if (fileName.find("..") != string::npos) return -2;
   if (!fileName.compare("/")) realPath.append("/index.html");
   else realPath.append(fileName);
+  int dir = fdopendir(realPath);
+  if (dir) return dir;
   if (access(realPath.c_str(), F_OK)) return -1;
   else return open(realPath.c_str(), O_RDONLY);
 }
 
-string parseFileName(string str) {
+string extractMid(string str) {
   int start = str.find(' ') + 1;
   int end = str.find(' ', start);
   return str.substr(start, end - start);
+}
+
+string extractFileName(string str) {
+  int pos = ln.find('?');
+  return pos == -1 ? str : ln.substr(0, pos);
+}
+
+string getQuery(string str) {
+  int pos = ln.find('?');
+  return pos == -1 ? string() : ln.substr(pos + 1);
+}
+
+string postQuery(int skt) {
+  string query = string("");
+  unsigned char newChar;
+  int n;
+
+  while((n = read(skt, &newChar, sizeof(newChar) ) ) > 0 ) query += newChar;
+
+  return query;
 }
 
 string parseInput(int skt) {
@@ -206,10 +253,12 @@ string addDoc(string output, int fd) {
 }
 
 void process(int skt) {
+  int req = INVALID;
   int err = NO_ERR;
   int fd = -1;
   string type = string("text/plain");
   string input = parseInput(skt);
+  string query;
 
   cout << input << endl;
   // for (int i = 0; i < input.length(); i ++) {
@@ -217,13 +266,28 @@ void process(int skt) {
   // }
   
   if (!verify(input)) err = UNAUTHORIZED;
-  else if (!validate(input)) err = INVALID_REQUEST;
+  else if ((req = requestType(input)) == INVALID) err = INVALID_REQUEST;
   else {
-    string fileName = parseFileName(input);
-    if ((fd = openFile(fileName)) < 0) err = FILE_NOT_FOUND;
-    else if (matchEnd(fileName, string(".html")) || !fileName.compare("/")) type = string("text/html");
-    else if (matchEnd(fileName, string(".gif"))) type = string("image/gif");
-    else if (matchEnd(fileName, string(".svg"))) type = string("image/svg+xml");
+    string mid = extractMid(input);
+    string fileName = parseFileName(mid);
+
+    if (req == GET) query = getQuery(mid);
+    else if (req == POST) query = postQuery(skt);
+
+    int op = opType(fileName);
+
+    switch (op) {
+      case FILE:
+        if ((fd = openFile(fileName)) < 0) {
+          if (fd == -1) err = FILE_NOT_FOUND;
+          if (fd == -2) err = INVALID_REQUEST;
+        } else if (matchEnd(fileName, string(".html")) || !fileName.compare("/")) type = string("text/html");
+        else if (matchEnd(fileName, string(".gif"))) type = string("image/gif");
+        else if (matchEnd(fileName, string(".svg"))) type = string("image/svg+xml");
+        break;
+    }
+
+    
   }
   string output = initOutput(err, type);
   cout << output << endl;

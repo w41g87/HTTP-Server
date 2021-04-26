@@ -41,7 +41,7 @@
 ** 03/07/95: Carlos Varela, cvarela@ncsa.uiuc.edu
 **
 ** 1.8 : Fixed bug (strcat->sprintf) when reporting error.
-**       Included getline() function from util.c in NCSA httpd distribution.
+**       Included mygetline() function from util.c in NCSA httpd distribution.
 **
 ** 11/08/95: Brandon Long, blong@ncsa.uiuc.edu
 **
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
        goto openconf;
     }
 
-    while(!(getline(input,MAXLINE,fp))) {
+    while(!(mygetline(input,MAXLINE,fp))) {
         char confname[MAXLINE];
         if((input[0] == '#') || (!input[0]))
             continue;
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
         servererr(errstr);
     }
 
-    while(!(getline(input,MAXLINE,fp))) {
+    while(!(mygetline(input,MAXLINE,fp))) {
         char type[MAXLINE];
         char url[MAXLINE];
         char num[10];
@@ -377,7 +377,7 @@ int isname(char c)
         return (!isspace(c));
 }
 
-int getline(char *s, int n, FILE *f) {
+int mygetline(char *s, int n, FILE *f) {
     register int i=0;
 
     while(1) {

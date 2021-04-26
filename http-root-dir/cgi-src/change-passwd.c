@@ -151,7 +151,7 @@ main(int argc, char *argv[]) {
     }
 
     found = 0;
-    while(!(getline(line,256,f))) {
+    while(!(mygetline(line,256,f))) {
         if(found || (line[0] == '#') || (!line[0])) {
             putline(tfp,line);
             continue;
