@@ -538,8 +538,8 @@ void process(int skt) {
   //   cout << (int)input.at(i) << endl;
   // }
   
-  if (!verify(input)) err = UNAUTHORIZED;
-  else if ((req = requestType(input)) == INVALID) err = INVALID_REQUEST;
+  if (!verify(input)) writeOutput(skt, initOutput(UNAUTHORIZED, type));
+  else if ((req = requestType(input)) == INVALID) writeOutput(skt, initOutput(INVALID_REQUEST, type));
   else {
     string mid = extractMid(input);
     string fileName = extractFileName(mid);
