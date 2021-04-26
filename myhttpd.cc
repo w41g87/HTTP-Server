@@ -218,7 +218,8 @@ string dirToTable(DIR * dir, string &path, int sort, int order) {
 
   while ((ent = readdir(dir)) != NULL) {
     char *name = ent->d_name;
-    path.append("/" + name);
+    path.append("/");
+    path.append(name);
     unsigned char type = ent->d_type;
     if (strcmp(name, ".") && strcmp(name, "..")) {
         Document doc = Document();
