@@ -376,11 +376,11 @@ string genHtmlFromDir(string realPath, string linkPath) {
           html.append("</td>\n");
 
           html.append("<td>\n");
-          html.append("&nbsp;")
+          html.append("&nbsp;");
           html.append("</td>\n");
 
           html.append("<td>\n");
-          html.append("&nbsp;")
+          html.append("&nbsp;");
           html.append("</td>\n");
 
         html.append("</tr>\n");
@@ -395,7 +395,7 @@ string genHtmlFromDir(string realPath, string linkPath) {
 
         html.append("</tr>\n");
       
-      html.append("</tbody>")
+      html.append("</tbody>");
       html.append("</table>\n");
     html.append("</body>\n");
 
