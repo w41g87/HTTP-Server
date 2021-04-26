@@ -599,6 +599,8 @@ void process(int skt) {
         if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
         else if (access(realPath.c_str(), F_OK)) err = FILE_NOT_FOUND;
         else if (setenv("QUERY_STRING", query.c_str(), 1)) perror("setenv");
+        setenv("REQUEST_METHOD", req == GET ? "GET" : "POST", 1);
+
         pid = fork();
         if (pid == 0) {
           close(2);
