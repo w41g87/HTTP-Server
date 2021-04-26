@@ -534,6 +534,7 @@ void process(int skt) {
     string mid = extractMid(input);
     string fileName = extractFileName(mid);
     string realPath = string("http-root-dir");
+    string output;
     int op = opType(fileName);
 
     if (matchEnd(fileName, string("/"))) fileName.pop_back();
@@ -559,7 +560,7 @@ void process(int skt) {
           else if (matchEnd(realPath, string(".svg"))) type = string("image/svg+xml");
         }
 
-        string output = initOutput(err, type);
+        output = initOutput(err, type);
         writeOutput(skt, addDoc(output, fd));
         close(fd);
         break;
@@ -571,9 +572,9 @@ void process(int skt) {
           type = string("text/html");
         }
 
-        string output = initOutput(err, type);
+        output = initOutput(err, type);
         writeOutput(skt, output.append(genHtmlFromDir(realPath, fileName)));
-        cout << output << endl;
+        
         break;
       case EXE:
         if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
@@ -584,7 +585,7 @@ void process(int skt) {
           close(2);
           close(0);
           dup2(1, skt);
-          execvp(realPath, NULL);
+          execvp(realPath->c_str(), NULL);
         }
         break;
       case SO:
@@ -596,7 +597,7 @@ void process(int skt) {
     }
   }
   
-  
+  cout << output << endl;
   close(skt);
 }
 
