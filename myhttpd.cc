@@ -676,7 +676,7 @@ void process(int skt) {
           output.append(" sec\r\nMinimum service time: ");
           output.append(to_string(minTime));
           output.append(" sec\r\nURL request: " + minReq);
-          output.append("Maximum service time: ");
+          output.append("\r\nMaximum service time: ");
           output.append(to_string(maxTime));
           output.append(" sec\r\nURL request: " + maxReq);
           writeOutput(skt, output);
