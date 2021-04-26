@@ -110,10 +110,10 @@ class Document {
     int _type;
     string modTime() { return string(ctime(&_mtime)); }
     string creatTime() { return string(ctime(&_ctime)); }
-    struct timespec _mtime;
-    struct timespec _ctime;
+    struct time_t _mtime;
+    struct time_t _ctime;
 
-}
+};
 
 void pipeHandler(int signum) {
   cout << "SIGPIPE" << endl;
@@ -199,7 +199,7 @@ string dirToTable(DIR * dir, int sort, int order) {
         return (order == ASC && a._ctime.tv_sec > b._ctime.tv_sec) || (order == DESC && a._ctime.tv_sec <= b._ctime.tv_sec);
         break;
     }
-  }
+  };
   
   struct dirent * ent;
   priority_queue<Document, vector<Document>, decltype(comp)> q(comp);
