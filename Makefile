@@ -17,7 +17,7 @@ hello.so: hello.o
 	ld -G -o http-root-dir/cgi-bin/hello.so hello.o
 
 jj-mod.so: jj-mod.o util.o
-	ld -G -o jj-mod.so jj-mod.o util.o -fPIC
+	ld -G -o http-root-dir/cgi-bin/jj-mod.so jj-mod.o util.o -fPIC
 
 jj-mod.o: jj-mod.c
 	$(CC) -c jj-mod.c -fPIC
