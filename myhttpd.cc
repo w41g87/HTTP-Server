@@ -227,7 +227,7 @@ string dirToTable(DIR * dir, string &path, int sort, int order) {
         if (type == DT_DIR) doc._type = FOLDER;
         else doc._type = getFileType(name);
         struct stat st;
-        stat(name, &st);
+        stat(path.c_str(), &st);
         doc._size = st.st_size;
         doc._mtime = st.st_mtim.tv_sec;
         doc._ctime = st.st_ctim.tv_sec;
