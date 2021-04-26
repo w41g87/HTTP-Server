@@ -628,16 +628,16 @@ void process(int skt) {
           }
 
           // Get function to print hello
-          httprunfunc hello_httprun;
+          httprunfunc httprun;
 
-          hello_httprun = (httprunfunc) dlsym( lib, "httprun");
-          if ( hello_httprun == NULL ) {
+          httprun = (httprunfunc) dlsym( lib, "httprun");
+          if ( httprun == NULL ) {
             perror( "dlsym: httprun not found:");
             exit(1);
           }
-
+          writeOutput(skt, string("HTTP/1.1 200 Document follows\r\nServer: CS 252 lab5\r\n"));
           // Call the function
-          hello_httprun( skt, query.c_str());
+          httprun( skt, query.c_str());
 
           break;
       }
