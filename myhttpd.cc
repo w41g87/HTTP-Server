@@ -54,7 +54,7 @@ int numThreads = 0;
 
 int serverSocket;
 
-time_t startTime;
+clock_t startTime;
 
 double minTime, maxTime;
 
@@ -557,16 +557,16 @@ string addDoc(string output, int fd) {
 }
 
 void process(int skt) {
-  time_t reqBegin, reqEnd, now;
+  clock_t reqBegin, reqEnd, now;
 
-  time(&reqBegin);
+  reqBegin = clock();
 
   int req = INVALID;
   int err = NO_ERR;
   int fd = -1;
   int pid = -1;
   void * lib;
-  
+
   string type = string("text/plain");
   string input = parseInput(skt);
   string query;
@@ -670,9 +670,9 @@ void process(int skt) {
           output = initOutput(err, type);
           output.append("Name: Philip Jin\r\n");
 
-          time(&now);
+          now = clock();
           output.append("Server uptime: ");
-          output.append(to_string(difftime(now, startTime)));
+          output.append(to_string((double)(now - startTime) / CLOCKS_PER_SEC));
           output.append(" sec\r\nMinimum service time: ");
           output.append(to_string(minTime));
           output.append(" sec\r\nURL request: " + minReq);
@@ -687,8 +687,8 @@ void process(int skt) {
   
   cout << output << endl;
   close(skt);
-  time(&reqEnd);
-  double diff = difftime(reqEnd, reqBegin);
+  reqEnd = clock();
+  double diff = (double)(reqEnd - reqBegin) / CLOCKS_PER_SEC;
   if (diff > maxTime) {
     maxTime = diff;
     maxReq = string(mid);
@@ -751,9 +751,9 @@ void atomic() {
 }
 
 int main(int argc, char * argv[]) {
-  time(&startTime);
+  startTime = clock();
 
-  fdLog = open("./log", O_RDWR | O_APPEND | O_CREAT);
+  fdLog = open("http-root-dir/htdocs/log", O_RDWR | O_APPEND | O_CREAT);
 
   int port = 8006;
 
