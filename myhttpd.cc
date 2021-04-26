@@ -16,6 +16,8 @@
 #include <cassert>
 #include <queue>
 #include <time.h>
+#include <dlfcn.h>
+#include <link.h>
 
 const char * usage =
 "                                                               \n"
