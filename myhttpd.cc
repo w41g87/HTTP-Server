@@ -109,10 +109,10 @@ class Document {
     string _name;
     off_t _size;
     int _type;
-    string modTime() { return string(ctime(&_mtime.tv_sec)); }
-    string creatTime() { return string(ctime(&_ctime.tv_sec)); }
-    struct timespec _mtime;
-    struct timespec _ctime;
+    string modTime() { return string(ctime(&_mtime)); }
+    string creatTime() { return string(ctime(&_ctime)); }
+    time_t _mtime;
+    time_t _ctime;
 
 };
 
@@ -223,8 +223,8 @@ string dirToTable(DIR * dir, int sort, int order) {
         struct stat st;
         stat(name, &st);
         doc._size = st.st_size;
-        doc._mtime = st.st_mtim;
-        doc._ctime = st.st_ctim;
+        doc._mtime = st.st_mtim.tv_sec;
+        doc._ctime = st.st_ctim.tv_sec;
 
         q.push(doc);
     } 
@@ -311,7 +311,7 @@ string genHtmlFromDir(string realPath, string linkPath) {
     pos = query.find('&') + 1;
   } while(pos - 1 != string::npos);
   
-
+  cout << "start of HTML generation" << endl;
   string html = string("<!DOCTYPE html>\n");
   html.append("<html>\n");
     html.append("<head>\n");
