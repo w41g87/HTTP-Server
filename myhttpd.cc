@@ -673,10 +673,10 @@ void process(int skt) {
           output.append("Server uptime: ")
           output.append(difftime(now, startTime));
           output.append(" sec\r\nMinimum service time: ");
-          output.append(string(minTime));
+          output.append(minTime);
           output.append(" sec\r\nURL request: " + minReq);
           output.append("Maximum service time: ");
-          output.append(string(maxTime));
+          output.append(maxTime);
           output.append(" sec\r\nURL request: " + maxReq);
           writeOutput(skt, output);
           break;
