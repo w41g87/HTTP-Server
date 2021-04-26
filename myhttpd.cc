@@ -573,6 +573,7 @@ void process(int skt) {
 
         string output = initOutput(err, type);
         writeOutput(skt, output.append(genHtmlFromDir(realPath, fileName)));
+        cout << output << endl;
         break;
       case EXE:
         if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
@@ -595,7 +596,7 @@ void process(int skt) {
     }
   }
   
-  cout << output << endl;
+  
   close(skt);
 }
 
