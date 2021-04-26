@@ -341,7 +341,7 @@ string genHtmlFromDir(string realPath, string linkPath) {
         html.append("<tr>\n");
 
           html.append("<th valign=\"top\">\n");
-          html.append("<img src=\"/icons/blank.xbm\" alt=\"[ICO]\">\n");
+          html.append("<img src=\"/icons/blueball.gif\" alt=\"[ICO]\">\n");
           html.append("</th>\n");
 
           html.append("<th>\n");
@@ -385,7 +385,7 @@ cout << "end of table head generation" << endl;
         html.append("<tr>\n");
 
           html.append("<td valign=\"top\">\n");
-          html.append("<img src=\"/icons/back.gif\" alt=\"[PARENTDIR]\">\n");
+          html.append("<img src=\"/icons/index.gif\" alt=\"[PARENTDIR]\">\n");
           html.append("</td>\n");
 
           html.append("<td>\n");
