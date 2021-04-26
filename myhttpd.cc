@@ -619,7 +619,7 @@ void process(int skt) {
           }
           break;
         case SO:
-          void * lib = dlopen( realPath, RTLD_LAZY );
+          void * lib = dlopen( realPath->c_str(), RTLD_LAZY );
 
           if ( lib == NULL ) {
             fprintf( stderr, "%s not found\n", realPath.c_str());
