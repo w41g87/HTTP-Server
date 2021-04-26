@@ -14,6 +14,7 @@
 #include <pthread.h>
 #include <dirent.h>
 #include <cassert>
+#include <queue>
 
 const char * usage =
 "                                                               \n"
