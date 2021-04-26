@@ -567,7 +567,7 @@ void process(int skt) {
 
     if (op == DOC) {
       if (!matchStart(fileName, "/icons")) realPath.append("/htdocs");
-      realPath.append(fileName.empty() ? "/index.html" : fileName);
+      realPath.append(fileName.compare("/") ? fileName : "/index.html");
       if (is_dir(realPath)) op = DIRECTORY;
     } else realPath.append(fileName);
 
