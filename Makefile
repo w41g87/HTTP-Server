@@ -2,7 +2,7 @@ CXX = g++ -fPIC -pthread
 CC = gcc
 NETLIBS= -lnsl
 
-all: git-commit myhttpd daytime-server use-dlopen hello.so
+all: git-commit myhttpd daytime-server use-dlopen hello.so jj-mod.so
 
 daytime-server : daytime-server.o
 	$(CXX) -o $@ $@.o $(NETLIBS)
