@@ -280,7 +280,7 @@ string dirToTable(DIR * dir, int sort, int order) {
 }
 
 string genHtmlFromDir(string realPath, string linkPath) {
-  DIR * dir = opendir(realPath);
+  DIR * dir = opendir(realPath.c_str());
   if (!dir) return string();
   string query = string(getenv("QUERY_STRING"));
   int sort, order, pos = 0;
@@ -292,7 +292,7 @@ string genHtmlFromDir(string realPath, string linkPath) {
       if (matchStart(query, "name")) sort = NAME;
       else if (matchStart(query, "mod-time")) sort = MOD_TIME;
       else if (matchStart(query, "creat-time")) sort = CREAT_TIME;
-      else if (matchStart(query, "size")) sort = size;
+      else if (matchStart(query, "size")) sort = SIZE;
       else assert(0);
     } else if (matchStart(query, "order=")) {
       query = query.substr(query.find('=') + 1);
