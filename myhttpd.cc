@@ -587,7 +587,7 @@ void process(int skt) {
           close(2);
           close(0);
           dup2(1, skt);
-          execvp(realPath->c_str(), NULL);
+          execvp(realPath.c_str(), NULL);
         }
         break;
       case SO:
