@@ -557,7 +557,7 @@ string addDoc(string output, int fd) {
 }
 
 void process(int skt) {
-  time_t reqBegin, reqEnd;
+  time_t reqBegin, reqEnd, now;
 
   time(&reqBegin);
 
@@ -668,7 +668,7 @@ void process(int skt) {
         case STAT:
           output = initOutput(err, type);
           output.append("Name: Philip Jin\r\n");
-          time_t now;
+
           time(&now);
           output.append("Server uptime: ")
           output.append(to_string(difftime(now, startTime)));
