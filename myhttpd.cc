@@ -394,7 +394,7 @@ cout << "end of table head generation" << endl;
         html.append("</tr>\n");
 
         html.append(dirToTable(dir, sort, order));
-
+cout << "end of table body generation" << endl;
         html.append("<tr>\n");
 
           html.append("<th colspan=\"5\">\n");
