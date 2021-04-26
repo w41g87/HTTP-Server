@@ -19,8 +19,11 @@ hello.so: hello.o
 jj-mod.so: jj-mod.o util.o
 	ld -G -o http-root-dir/cgi-bin/jj-mod.so jj-mod.o util.o
 
-.c.o: 
-	$(CC) -c $<
+jj-mod.o: jj-mod.c
+	$(CC) -c jj-mod.c
+
+util.o: util.c
+	$(CC) -c util.c
 
 %.o: %.cc
 	@echo 'Building $@ from $<'
