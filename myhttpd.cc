@@ -354,16 +354,16 @@ string genHtmlFromDir(string realPath, string linkPath) {
 
           html.append("<th>\n");
           if (sort == MOD_TIME) {
-            if (order == ASC) html.append("<a href=\"?sort=mod_time&order=desc\">Last Modified &#9650;</a>\n");
-            else if (order == DESC) html.append("<a href=\"?sort=mod_time&order=asc\">Last Modified &#9660;</a>\n");
-          } else html.append("<a href=\"?sort=mod_time&order=asc\">Last Modified</a>\n");
+            if (order == ASC) html.append("<a href=\"?sort=mod-time&order=desc\">Last Modified &#9650;</a>\n");
+            else if (order == DESC) html.append("<a href=\"?sort=mod-time&order=asc\">Last Modified &#9660;</a>\n");
+          } else html.append("<a href=\"?sort=mod-time&order=asc\">Last Modified</a>\n");
           html.append("</th>\n");
 
           html.append("<th>\n");
-          if (sort == MOD_TIME) {
-            if (order == ASC) html.append("<a href=\"?sort=creat_time&order=desc\">Created &#9650;</a>\n");
-            else if (order == DESC) html.append("<a href=\"?sort=creat_time&order=asc\">Created &#9660;</a>\n");
-          } else html.append("<a href=\"?sort=creat_time&order=asc\">Created</a>\n");
+          if (sort == CREAT_TIME) {
+            if (order == ASC) html.append("<a href=\"?sort=creat-time&order=desc\">Created &#9650;</a>\n");
+            else if (order == DESC) html.append("<a href=\"?sort=creat-time&order=asc\">Created &#9660;</a>\n");
+          } else html.append("<a href=\"?sort=creat-time&order=asc\">Created</a>\n");
           html.append("</th>\n");
 
         html.append("</tr>\n");
