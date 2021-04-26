@@ -579,10 +579,8 @@ void process(int skt) {
 
     if (realPath.find("..") != string::npos) {
       writeOutput(skt, initOutput(INVALID_REQUEST, type));
-      break;
     } else if (access(realPath.c_str(), F_OK)) {
       writeOutput(skt, initOutput(FILE_NOT_FOUND, type));
-      break;
     } else {
       switch (op) {
         case DOC:
