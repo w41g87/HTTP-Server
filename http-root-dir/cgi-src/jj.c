@@ -10,8 +10,6 @@
 #include <string.h>
 #ifndef NO_STDLIB_H
 #include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
 #else
 char *getenv();
 #endif
@@ -30,7 +28,6 @@ char x2c(char *what);
 void unescape_url(char *url);
 void plustospace(char *str);
 
-extern void httprun(int, char *);
 
 char *sublist[] = {
     "The Pepe Gourmet Sub",
@@ -139,8 +136,7 @@ void print_error(char *reason) {
     exit(1);
 }
 
-
-void httprun(int ssock, char * query_string) {
+main(int argc, char *argv[]) {
     register int x,m=0;
     char *cl;
     char w[256];
@@ -151,11 +147,9 @@ void httprun(int ssock, char * query_string) {
     char address[64];
     FILE *tfp,*order;
 
-    dup2(ssock, 1);
-
     printf("Content-type: text/html%c%c",LF,LF);
 
-    cl=query_string;
+    cl=getenv("QUERY_STRING");
     if((!cl) || (!cl[0]))
         dump_form();
 
@@ -267,8 +261,4 @@ void httprun(int ssock, char * query_string) {
     fprintf(order,"problem. Thank you.%c%c.%c",LF,LF,LF);
     fclose(order);
     exit(0);
-}
-
-int main(int argc, char *argv[]) {
-    httprun(1, getenv("QUERY_STRING"));
 }

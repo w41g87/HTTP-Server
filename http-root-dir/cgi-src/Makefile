@@ -14,7 +14,7 @@ RM= /bin/rm -f
 .c.o: 
 	$(CC) -c $(CFLAGS) $<
 
-all: query post-query imagemap jj jj-mod.so phf
+all: query post-query imagemap jj phf
 
 att:
 	make all CC=gcc CFLAGS="-O2 -DNO_STDLIB_H"
