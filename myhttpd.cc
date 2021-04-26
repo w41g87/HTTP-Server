@@ -263,7 +263,7 @@ string dirToTable(DIR * dir, int sort, int order) {
       output.append("</td>\n");
 
       output.append("<td align=\"right\">\n");
-        output.append(doc._type == FOLDER ? "  - " : doc._size);
+        output.append(doc._type == FOLDER ? "  - " : to_string(doc._size));
       output.append("B\n</td>\n");
 
       output.append("<td align=\"right\">\n");
@@ -372,7 +372,7 @@ string genHtmlFromDir(string realPath, string linkPath) {
           html.append("</td>\n");
 
           html.append("<td align=\"right\">\n");
-          html.append("  - ")
+          html.append("  - ");
           html.append("</td>\n");
 
           html.append("<td>\n");
