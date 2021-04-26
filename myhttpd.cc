@@ -54,7 +54,9 @@ int numThreads = 0;
 
 int serverSocket;
 
-time_t startTime, minTime, maxTime;
+time_t startTime;
+
+double minTime, maxTime;
 
 int numReq, fdLog;
 
@@ -671,10 +673,10 @@ void process(int skt) {
           output.append("Server uptime: ")
           output.append(difftime(now, startTime));
           output.append(" sec\r\nMinimum service time: ");
-          output.append(minTime);
+          output.append(string(minTime));
           output.append(" sec\r\nURL request: " + minReq);
           output.append("Maximum service time: ");
-          output.append(maxTime);
+          output.append(string(maxTime));
           output.append(" sec\r\nURL request: " + maxReq);
           writeOutput(skt, output);
           break;
