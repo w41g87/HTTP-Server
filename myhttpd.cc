@@ -567,7 +567,7 @@ void process(int skt) {
   string type = string("text/plain");
   string input = parseInput(skt);
   string query;
-  string output;
+  string output, mid;
 
   cout << input << endl;
   // for (int i = 0; i < input.length(); i ++) {
@@ -577,7 +577,7 @@ void process(int skt) {
   if (!verify(input)) writeOutput(skt, initOutput(UNAUTHORIZED, type));
   else if ((req = requestType(input)) == INVALID) writeOutput(skt, initOutput(INVALID_REQUEST, type));
   else {
-    string mid = extractMid(input);
+    mid = extractMid(input);
     string fileName = extractFileName(mid);
     string realPath = string("http-root-dir");
     
@@ -597,7 +597,7 @@ void process(int skt) {
     pthread_mutex_lock(&mutex);
     writeOutput(fdLog, "File or dir requested: ");
     writeOutput(fdLog, realPath);
-    writeOutput(fdLog, endl);
+    writeOutput(fdLog, "\n");
     pthread_mutex_unlock(&mutex);
 
     if (realPath.find("..") != string::npos) {
@@ -711,8 +711,8 @@ void atomic() {
     inet_ntop(AF_INET, &(clientIPAddress.sin_addr), ip, INET_ADDRSTRLEN);
     pthread_mutex_lock(&mutex);
     writeOutput(fdLog, "Host IP Address: ");
-    writeOutput(fdLog, ip);
-    writeOutput(fdLog, endl);
+    writeOutput(fdLog, string(ip));
+    writeOutput(fdLog, "\r\n");
     numReq++;
     pthread_mutex_unlock(&mutex);
 
