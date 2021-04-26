@@ -269,7 +269,7 @@ void process(int skt) {
   else if ((req = requestType(input)) == INVALID) err = INVALID_REQUEST;
   else {
     string mid = extractMid(input);
-    string fileName = parseFileName(mid);
+    string fileName = extractFileName(mid);
 
     if (req == GET) query = getQuery(mid);
     else if (req == POST) query = postQuery(skt);
