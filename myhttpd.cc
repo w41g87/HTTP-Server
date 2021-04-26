@@ -560,7 +560,7 @@ void process(int skt) {
     
     int op = opType(fileName);
 
-    if (matchEnd(fileName, string("/"))) fileName.pop_back();
+    //if (matchEnd(fileName, string("/"))) fileName.pop_back();
 
     if (req == GET) query = getQuery(mid);
     else if (req == POST) query = postQuery(skt);
