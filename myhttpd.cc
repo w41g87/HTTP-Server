@@ -190,7 +190,7 @@ int getFileType(const char * name) {
   else return UNKNOWN;
 }
 
-string dirToTable(DIR * dir, string &path, int sort, int order) {
+string dirToTable(DIR * dir, string path, int sort, int order) {
   cout << "start of table body generation" << endl;
 
   auto comp = [sort, order](Document a, Document b) {
