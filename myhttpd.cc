@@ -290,7 +290,9 @@ string dirToTable(DIR * dir, int sort, int order) {
     output.append("</tr>\n");
     q.pop();
   }
+
   cout << "end of table body population (still in function)" << endl;
+  return output;
 }
 
 string genHtmlFromDir(string realPath, string linkPath) {
