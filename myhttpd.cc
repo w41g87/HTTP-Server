@@ -75,10 +75,6 @@ enum Operation {
 
 int concur = NO_CONCURRENCY;
 
-Class File {
-
-}
-
 void pipeHandler(int signum) {
   cout << "SIGPIPE" << endl;
 }
