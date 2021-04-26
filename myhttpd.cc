@@ -68,7 +68,7 @@ enum Request {
 
 enum Operation {
   DOC,
-  DIR,
+  DIRECTORY,
   EXE, 
   SO
 };
