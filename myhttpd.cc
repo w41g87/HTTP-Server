@@ -214,6 +214,8 @@ string dirToTable(DIR * dir, int sort, int order) {
   priority_queue<Document, vector<Document>, decltype(comp)> q(comp);
   string output = string();
 
+  cout << "start of pq population" << endl;
+
   while ((ent = readdir(dir)) != NULL) {
     char *name = ent->d_name;
     unsigned char type = ent->d_type;
@@ -231,6 +233,7 @@ string dirToTable(DIR * dir, int sort, int order) {
         q.push(doc);
     } 
   }
+  cout << "pq populated" << endl;
   while(!q.empty()) {
     Document doc = q.top();
     output.append("<tr>\n");
