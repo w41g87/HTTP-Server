@@ -190,7 +190,7 @@ int getFileType(const char * name) {
   else return UNKNOWN;
 }
 
-string dirToTable(DIR * dir, int sort, int order) {
+string dirToTable(DIR * dir, string &path, int sort, int order) {
   cout << "start of table body generation" << endl;
 
   auto comp = [sort, order](Document a, Document b) {
@@ -218,6 +218,7 @@ string dirToTable(DIR * dir, int sort, int order) {
 
   while ((ent = readdir(dir)) != NULL) {
     char *name = ent->d_name;
+    path.append("/" + name);
     unsigned char type = ent->d_type;
     if (strcmp(name, ".") && strcmp(name, "..")) {
         Document doc = Document();
@@ -401,7 +402,7 @@ cout << "end of table head generation" << endl;
 
         html.append("</tr>\n");
 
-        html.append(dirToTable(dir, sort, order));
+        html.append(dirToTable(dir, realPath, sort, order));
 cout << "end of table body generation" << endl;
         html.append("<tr>\n");
 
