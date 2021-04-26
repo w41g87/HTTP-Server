@@ -573,57 +573,72 @@ void process(int skt) {
 
     if (matchEnd(realPath, string("/"))) realPath.pop_back();
 
-    switch (op) {
-      case DOC:
-        cout << realPath << endl;
-        if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
-        else if (access(realPath.c_str(), F_OK)) err = FILE_NOT_FOUND;
-        else {
+    if (realPath.find("..") != string::npos) {
+      writeOutput(skt, initOutput(INVALID_REQUEST, type));
+      break;
+    } else if (access(realPath.c_str(), F_OK)) {
+      writeOutput(skt, initOutput(FILE_NOT_FOUND, type));
+      break;
+    } else {
+      switch (op) {
+        case DOC:
+          cout << realPath << endl;
           fd = open(realPath.c_str(), O_RDONLY);
           if (matchEnd(realPath, string(".html"))) type = string("text/html");
           else if (matchEnd(realPath, string(".gif"))) type = string("image/gif");
           else if (matchEnd(realPath, string(".svg"))) type = string("image/svg+xml");
-        }
 
-        output = initOutput(err, type);
-        writeOutput(skt, addDoc(output, fd));
-        close(fd);
-        break;
-      case DIRECTORY:
-        if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
-        else if (access(realPath.c_str(), F_OK)) err = FILE_NOT_FOUND;
-        else {
+          output = initOutput(err, type);
+          writeOutput(skt, addDoc(output, fd));
+          close(fd);
+          break;
+        case DIRECTORY:
           if (setenv("QUERY_STRING", query.empty() ? "sort=name&order=asc" : query.c_str(), 1)) perror("setenv");
           type = string("text/html");
-        }
-        if (genHtmlFromDir(realPath, fileName).empty()) err = INVALID_REQUEST;
-        output = initOutput(err, type);
+          
+          if (genHtmlFromDir(realPath, fileName).empty()) err = INVALID_REQUEST;
+          output = initOutput(err, type);
 
-        writeOutput(skt, output.append(genHtmlFromDir(realPath, fileName)));
-        
-        break;
-      case EXE:
-        cout << "query" + query << endl;
-        if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
-        else if (access(realPath.c_str(), F_OK)) err = FILE_NOT_FOUND;
-        else if (setenv("QUERY_STRING", query.c_str(), 1)) perror("setenv");
-        setenv("REQUEST_METHOD", req == GET ? "GET" : "POST", 1);
+          writeOutput(skt, output.append(genHtmlFromDir(realPath, fileName)));
+          
+          break;
+        case EXE:
+          cout << "query: " + query << endl;
+          if (setenv("QUERY_STRING", query.c_str(), 1)) perror("setenv");
+          setenv("REQUEST_METHOD", req == GET ? "GET" : "POST", 1);
 
-        pid = fork();
-        if (pid == 0) {
-          close(2);
-          close(0);
-          dup2(skt, 1);
-          printf("HTTP/1.1 200 Document follows\r\nServer: CS 252 lab5\r\n");
-          execvp(realPath.c_str(), NULL);
-        }
-        break;
-      case SO:
-        if (realPath.find("..") != string::npos) err = INVALID_REQUEST;
-        else if (access(realPath.c_str(), F_OK)) err = FILE_NOT_FOUND;
-        else if (setenv("QUERY_STRING", query.c_str(), 1)) perror("setenv");
+          pid = fork();
+          if (pid == 0) {
+            close(2);
+            close(0);
+            dup2(skt, 1);
+            printf("HTTP/1.1 200 Document follows\r\nServer: CS 252 lab5\r\n");
+            execlp(realPath.c_str(), realPath.substr(realPath.find_last_of('/') + 1).c_str());
+          }
+          break;
+        case SO:
+          void * lib = dlopen( realPath, RTLD_LAZY );
 
-        break;
+          if ( lib == NULL ) {
+            fprintf( stderr, "%s not found\n", realPath.c_str());
+            perror( "dlopen");
+            exit(1);
+          }
+
+          // Get function to print hello
+          httprunfunc hello_httprun;
+
+          hello_httprun = (httprunfunc) dlsym( lib, "httprun");
+          if ( hello_httprun == NULL ) {
+            perror( "dlsym: httprun not found:");
+            exit(1);
+          }
+
+          // Call the function
+          hello_httprun( skt, query.c_str());
+
+          break;
+      }
     }
   }
   
