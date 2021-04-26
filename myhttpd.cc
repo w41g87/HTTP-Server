@@ -13,6 +13,7 @@
 #include <signal.h>
 #include <pthread.h>
 #include <dirent.h>
+#include <cassert>
 
 const char * usage =
 "                                                               \n"
