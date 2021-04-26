@@ -229,7 +229,7 @@ string dirToTable(DIR * dir, int sort, int order) {
         doc._size = st.st_size;
         doc._mtime = st.st_mtim.tv_sec;
         doc._ctime = st.st_ctim.tv_sec;
-        cout << doc._mtime << endl;
+        cout << st.st_size << endl;
         q.push(doc);
     } 
   }
