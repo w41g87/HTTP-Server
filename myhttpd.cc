@@ -54,7 +54,7 @@ int numThreads = 0;
 
 int serverSocket;
 
-clock_t startTime;
+time_t startTime;
 
 double minTime, maxTime;
 
@@ -557,7 +557,8 @@ string addDoc(string output, int fd) {
 }
 
 void process(int skt) {
-  clock_t reqBegin, reqEnd, now;
+  clock_t reqBegin, reqEnd;
+  time_t now;
 
   reqBegin = clock();
 
@@ -670,9 +671,9 @@ void process(int skt) {
           output = initOutput(err, type);
           output.append("Name: Philip Jin\r\n");
 
-          now = clock();
+          time(&now);
           output.append("Server uptime: ");
-          output.append(to_string((double)(now - startTime) / CLOCKS_PER_SEC));
+          output.append(to_string((int)difftime(now, startTime)));
           output.append(" sec\r\nMinimum service time: ");
           output.append(to_string(minTime));
           output.append(" sec\r\nURL request: " + minReq);
@@ -751,7 +752,7 @@ void atomic() {
 }
 
 int main(int argc, char * argv[]) {
-  startTime = clock();
+  time(&startTime);
 
   fdLog = open("http-root-dir/htdocs/log", O_RDWR | O_APPEND | O_CREAT);
 
