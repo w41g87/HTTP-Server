@@ -671,12 +671,12 @@ void process(int skt) {
           time_t now;
           time(&now);
           output.append("Server uptime: ")
-          output.append(difftime(now, startTime));
+          output.append(to_string(difftime(now, startTime)));
           output.append(" sec\r\nMinimum service time: ");
-          output.append(minTime);
+          output.append(to_string(minTime));
           output.append(" sec\r\nURL request: " + minReq);
           output.append("Maximum service time: ");
-          output.append(maxTime);
+          output.append(to_string(maxTime));
           output.append(" sec\r\nURL request: " + maxReq);
           writeOutput(skt, output);
           break;
