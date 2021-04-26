@@ -544,7 +544,7 @@ void process(int skt) {
     if (req == GET) query = getQuery(mid);
     else if (req == POST) query = postQuery(skt);
 
-    if (op == FILE) {
+    if (op == DOC) {
       if (!matchStart(fileName, "/icons")) realPath.append("/htdocs");
       realPath.append(fileName.empty() ? "/index.html" : fileName);
       if (is_directory(realPath)) op = DIRECTORY;
