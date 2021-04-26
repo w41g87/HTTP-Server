@@ -191,6 +191,8 @@ int getFileType(const char * name) {
 }
 
 string dirToTable(DIR * dir, int sort, int order) {
+  cout << "start of table body generation" << endl;
+
   auto comp = [sort, order](Document a, Document b) {
     switch (sort) {
       case NAME:
