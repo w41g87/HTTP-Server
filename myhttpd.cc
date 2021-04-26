@@ -15,6 +15,7 @@
 #include <dirent.h>
 #include <cassert>
 #include <queue>
+#include <time.h>
 
 const char * usage =
 "                                                               \n"
@@ -110,8 +111,8 @@ class Document {
     int _type;
     string modTime() { return string(ctime(&_mtime)); }
     string creatTime() { return string(ctime(&_ctime)); }
-    struct time_t _mtime;
-    struct time_t _ctime;
+    struct timespec _mtime;
+    struct timespec _ctime;
 
 };
 
@@ -211,7 +212,7 @@ string dirToTable(DIR * dir, int sort, int order) {
     if (strcmp(name, ".") && strcmp(name, "..")) {
         Document doc = Document();
         doc._name = string(name);
-        if (type == DT_DIR) doc.type = FOLDER;
+        if (type == DT_DIR) doc._type = FOLDER;
         else doc._type = getFileType(name);
         struct stat st;
         stat(name, &st);
