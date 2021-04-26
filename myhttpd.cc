@@ -707,7 +707,7 @@ void atomic() {
 			      (struct sockaddr *)&clientIPAddress,
 			      (socklen_t*)&alen);
 
-    char* ip[INET_ADDRSTRLEN];
+    char ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(clientIPAddress.sin_addr), ip, INET_ADDRSTRLEN);
     pthread_mutex_lock(&mutex);
     writeOutput(fdLog, "Host IP Address: ");
