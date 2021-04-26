@@ -12,6 +12,7 @@
 #include <iostream>
 #include <signal.h>
 #include <pthread.h>
+#include <dirent.h>
 
 const char * usage =
 "                                                               \n"
@@ -172,13 +173,13 @@ string extractMid(string str) {
 }
 
 string extractFileName(string str) {
-  int pos = ln.find('?');
-  return pos == -1 ? str : ln.substr(0, pos);
+  int pos = str.find('?');
+  return pos == -1 ? str : str.substr(0, pos);
 }
 
 string getQuery(string str) {
-  int pos = ln.find('?');
-  return pos == -1 ? string() : ln.substr(pos + 1);
+  int pos = str.find('?');
+  return pos == -1 ? string() : str.substr(pos + 1);
 }
 
 string postQuery(int skt) {
