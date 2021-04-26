@@ -670,7 +670,7 @@ void process(int skt) {
           output.append("Name: Philip Jin\r\n");
 
           time(&now);
-          output.append("Server uptime: ")
+          output.append("Server uptime: ");
           output.append(to_string(difftime(now, startTime)));
           output.append(" sec\r\nMinimum service time: ");
           output.append(to_string(minTime));
