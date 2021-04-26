@@ -39,6 +39,8 @@ const char * usage =
 
 using namespace std;
 
+typedef void (*httprunfunc)(int ssock, const char* querystring);
+
 string credential = "dXNlcjpxd2VydHk=";
 
 int QueueLength = 5;
