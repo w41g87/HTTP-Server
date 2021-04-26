@@ -606,6 +606,7 @@ void process(int skt) {
           close(2);
           close(0);
           dup2(skt, 1);
+          printf("HTTP/1.1 200 Document follows\r\nServer: CS 252 lab5\r\n");
           execvp(realPath.c_str(), NULL);
         }
         break;
