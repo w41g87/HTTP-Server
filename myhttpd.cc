@@ -307,7 +307,7 @@ string genHtmlFromDir(string realPath, string linkPath) {
   string html = string("<!DOCTYPE html>\n");
   html.append("<html>\n");
     html.append("<head>\n");
-      html.append("<meta charset="UTF-8"\n");
+      html.append("<meta charset=\"UTF-8\"\n");
       html.append("<title>Directory Content of " + realPath.substr(realPath.find('/') + 1) + "</title>\n");
     html.append("</head>\n");
 
@@ -385,7 +385,7 @@ string genHtmlFromDir(string realPath, string linkPath) {
 
         html.append("</tr>\n");
 
-        html.append(dirToTable(dir));
+        html.append(dirToTable(dir, sort, order));
 
         html.append("<tr>\n");
 
