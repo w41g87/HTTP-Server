@@ -309,12 +309,12 @@ string genHtmlFromDir(string realPath, string linkPath) {
       else if (matchStart(query, "mod-time")) sort = MOD_TIME;
       else if (matchStart(query, "creat-time")) sort = CREAT_TIME;
       else if (matchStart(query, "size")) sort = SIZE;
-      else assert(0);
+      else return string();
     } else if (matchStart(query, "order=")) {
       query = query.substr(query.find('=') + 1);
       if (matchStart(query, "asc")) order = ASC;
       else if (matchStart(query, "desc")) order = DESC;
-      else assert(0);
+      else return string();
     }
     pos = query.find('&') + 1;
   } while(pos - 1 != string::npos);
@@ -590,8 +590,9 @@ void process(int skt) {
           if (setenv("QUERY_STRING", query.empty() ? "sort=name&order=asc" : query.c_str(), 1)) perror("setenv");
           type = string("text/html");
         }
-
+        if (genHtmlFromDir(realPath, fileName).empty()) err = INVALID_REQUEST;
         output = initOutput(err, type);
+
         writeOutput(skt, output.append(genHtmlFromDir(realPath, fileName)));
         
         break;
